@@ -1,8 +1,7 @@
 {
 	"name": "vuejs-storage",
-	"version": "0.2.0",
-	"main": "src/main.js",
-	"browser": "dist/vuejs-storage.min.js",
+	"version": "0.3.0",
+	"main": "src/index.js",
 	"license": "MIT",
 	"devDependencies": {
 		"babel-core": "^6.26.0",
@@ -12,13 +11,15 @@
 		"webpack": "^3.6.0"
 	},
 	"dependencies": {
-		"lodash.assignin": "^4.2.0",
-		"lodash.defaults": "^4.2.0",
-		"lodash.foreach": "^4.5.0"
+		"lodash.assignin": "^4.2.0"
 	},
 	"scripts": {
 		"build": "cross-env NODE_ENV=development webpack",
 		"prod": "cross-env NODE_ENV=production webpack",
 		"all": "cross-env NODE_ENV=development webpack && cross-env NODE_ENV=production webpack"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/maple3142/vuejs-storage.git"
 	}
 }

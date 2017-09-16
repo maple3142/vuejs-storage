@@ -37,7 +37,7 @@ var app2 = new Vue({
 ```
 ```html
 <script src="https://unpkg.com/vue"></script>
-<script src="https://unpkg.com/vuejs-storage"></script>
+<script src="https://unpkg.com/vuejs-storage/dist/vuejs-storage.min.js"></script>
 <div id="app">
   localStorage: <input type="text" v-model="text">
 </div>
