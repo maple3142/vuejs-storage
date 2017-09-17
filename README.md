@@ -18,7 +18,7 @@ var app = new Vue({
       text: "" //default value, will present if no record exists
     },
     {
-      name: "app1"
+      name: "app1" //localStorage.getItem('app1') can get the json string
     }
   )
 })
