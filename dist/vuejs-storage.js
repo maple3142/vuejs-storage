@@ -80,21 +80,16 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
-//webpack entry
-module.exports = __webpack_require__(1).default;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+exports.Storage = undefined;
 
-var _lodash = __webpack_require__(2);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.install = install;
+
+var _lodash = __webpack_require__(1);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -104,96 +99,166 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var count = 0;
 
-//default option
-var defaults = {
-	parse: JSON.parse,
-	stringify: JSON.stringify,
-	storage: window.localStorage,
-	name: 'vuejs-storage-' + count++
-	/**
-  * Data
-  * @class
-  */
-};
-var Data =
 /**
- * Data constructor
- * @constructor
- * @param {Object} data data, same as "data" in vue options
- * @param {Object=} option option object
- * @param {String=} option.name name for Storage name, if not provide will auto generate a name by vuejs-storage count(unstable)
- * @param {Storage=} option.storage localStorage/sessionStorage or something has similar api, default is window.localStorage
- * @param {Function=} option.parse json parsing function, default is JSON.parse
- * @param {Function=} option.stringify json stringifying function, default is JSON.stringify
+ * Storage
+ * @class
  */
-function Data(data) {
-	var option = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-	_classCallCheck(this, Data);
+var Storage = exports.Storage = function () {
+	/**
+  * Storage constructor
+  * @constructor
+  * @param {Object=} option option object
+  * @param {Object=} option.data data, same as "data" in vue options
+  * @param {String=} option.namespace Storage namespace, if not provide will auto generate a name by vuejs-storage count(unstable)
+  * @param {Storage=} option.storage localStorage/sessionStorage or something has similar api, default is window.localStorage
+  * @param {Function=} option.parse json parsing function, default is JSON.parse
+  * @param {Function=} option.stringify json stringifying function, default is JSON.stringify
+  */
+	function Storage() {
+		var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+		    _ref$parse = _ref.parse,
+		    parse = _ref$parse === undefined ? JSON.parse : _ref$parse,
+		    _ref$stringify = _ref.stringify,
+		    stringify = _ref$stringify === undefined ? JSON.stringify : _ref$stringify,
+		    _ref$storage = _ref.storage,
+		    storage = _ref$storage === undefined ? window.localStorage : _ref$storage,
+		    _ref$namespace = _ref.namespace,
+		    namespace = _ref$namespace === undefined ? 'vuejs-storage-' + count++ : _ref$namespace,
+		    _ref$data = _ref.data,
+		    data = _ref$data === undefined ? {} : _ref$data;
 
-	for (var k in defaults) {
-		if (!(k in option)) {
-			option[k] = defaults[k];
+		_classCallCheck(this, Storage);
+
+		this.data = data;
+		this.parse = parse;
+		this.stringify = stringify;
+		this.storage = storage;
+		this.namespace = namespace;
+
+		var item = void 0;
+		if ((item = storage.getItem(this.namespace)) !== null) {
+			this.data = this.parse(item);
 		}
 	}
-	this.option = option;
-	this.data = data;
-};
 
-var vuejsStorage = {
 	/**
-  * Vue.js plugin
-  * @param {Vue} Vue 
-  * @param {Object=} config 
+  * load data from localStorage
   */
-	install: function install(Vue, config) {
-		Vue.mixin({
-			beforeCreate: function beforeCreate() {
-				var _this = this;
-
-				if ('storage' in this.$options) {
-					if (typeof this.$options.storage === 'function') {
-						this.$options.storage = this.$options.storage();
-					}
-
-					//storage object can be access from this.$storage
-					this.$storage = this.$options.storage;
-
-					var _$options$storage = this.$options.storage,
-					    data = _$options$storage.data,
-					    option = _$options$storage.option;
 
 
-					var tmp = void 0;
-					if ((tmp = option.storage.getItem(option.name)) !== null) {
-						//if data exists
-						data = (0, _lodash2.default)(data, option.parse(tmp)); //override
-					}
-
-					this.$options.data = (0, _lodash2.default)(this.$options.data, data); //override
-
-					if (!('watch' in this.$options)) {
-						this.$options.watch = {}; //watch
-					}
-					Object.keys(data).forEach(function (k) {
-						_this.$options.watch[k] = function (v) {
-							//update and save
-							data[k] = v;
-							option.storage.setItem(option.name, option.stringify(data));
-						};
-					});
-				}
+	_createClass(Storage, [{
+		key: 'load',
+		value: function load() {
+			var item = void 0;
+			if ((item = this.storage.getItem(this.namespace)) !== null) {
+				this.data = (0, _lodash2.default)(this.data, this.parse(item));
 			}
-		});
-	},
+		}
 
-	Data: Data
-};
+		/**
+   * Set value to key
+   * @param {string} key 
+   * @param {any} value 
+   */
 
-exports.default = vuejsStorage;
+	}, {
+		key: 'set',
+		value: function set(key, value) {
+			if (arguments.length === 1) {
+				this.data = key;
+			} else {
+				this.data[key] = value;
+			}
+			this.storage.setItem(this.namespace, this.stringify(this.data));
+		}
+
+		/**
+   * Get value of key
+   * @param {string} key
+   */
+
+	}, {
+		key: 'get',
+		value: function get(key) {
+			if (!key) {
+				return this.data;
+			}
+			return this.data[key];
+		}
+
+		/**
+   * Get Vuex plugin from options
+   * @param {Vuex.Store} store 
+   */
+
+	}, {
+		key: 'plugin',
+		value: function plugin() {
+			var _this = this;
+
+			return function (store) {
+				_this.data = store.state;
+				_this.load();
+				store.replaceState(_this.get());
+				store.subscribe(function (mutation, state) {
+					_this.set(_this.data);
+				});
+			};
+		}
+	}]);
+
+	return Storage;
+}();
+
+function install(Vue, config) {
+	Vue.mixin({
+		beforeCreate: function beforeCreate() {
+			var _this2 = this;
+
+			if ('storage' in this.$options) {
+				(function () {
+					var storage = _this2.$options.storage;
+					if (typeof _this2.$options.storage === 'function') {
+						//function syntax
+						storage = _this2.$options.storage();
+					}
+					if (!(storage instanceof Storage)) {
+						throw new Error('"Storage" must be a "Storage" object');
+					}
+
+					_this2.$options.data = (0, _lodash2.default)(_this2.$options.data, storage.get()); //set data
+
+					if (!('watch' in _this2.$options)) {
+						_this2.$options.watch = {};
+					}
+
+					var _loop = function _loop(key) {
+						//create watchers
+						var watcher = function watcher(v) {};
+						if (key in _this2.$options.watch) {
+							//backup original watcher
+							watcher = _this2.$options.watch[key];
+						}
+						_this2.$options.watch[key] = function (value) {
+							storage.set(key, value);
+							watcher(value);
+						};
+					};
+
+					for (var key in storage.get()) {
+						_loop(key);
+					}
+
+					_this2.$storage = storage;
+				})();
+			}
+		}
+	});
+}
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports) {
 
 /**

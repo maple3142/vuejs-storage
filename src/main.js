@@ -2,80 +2,123 @@ import assign from 'lodash.assignin'
 
 var count = 0
 
-//default option
-const defaults = {
-	parse: JSON.parse,
-	stringify: JSON.stringify,
-	storage: window.localStorage,
-	name: `vuejs-storage-${count++}`
-}
 /**
- * Data
+ * Storage
  * @class
  */
-class Data {
+export class Storage {
 	/**
-	 * Data constructor
+	 * Storage constructor
 	 * @constructor
-	 * @param {Object} data data, same as "data" in vue options
 	 * @param {Object=} option option object
-	 * @param {String=} option.name name for Storage name, if not provide will auto generate a name by vuejs-storage count(unstable)
+	 * @param {Object=} option.data data, same as "data" in vue options
+	 * @param {String=} option.namespace Storage namespace, if not provide will auto generate a name by vuejs-storage count(unstable)
 	 * @param {Storage=} option.storage localStorage/sessionStorage or something has similar api, default is window.localStorage
 	 * @param {Function=} option.parse json parsing function, default is JSON.parse
 	 * @param {Function=} option.stringify json stringifying function, default is JSON.stringify
 	 */
-	constructor(data, option = {}) {
-		for (var k in defaults) {
-			if (!(k in option)) {
-				option[k] = defaults[k]
-			}
-		}
-		this.option = option
+	constructor({
+		parse = JSON.parse,
+		stringify = JSON.stringify,
+		storage = window.localStorage,
+		namespace = `vuejs-storage-${count++}`,
+		data = {}
+	} = {}) {
+
 		this.data = data
+		this.parse = parse
+		this.stringify = stringify
+		this.storage = storage
+		this.namespace = namespace
+
+		let item
+		if ((item = storage.getItem(this.namespace)) !== null) {
+			this.data = this.parse(item)
+		}
+	}
+
+	/**
+	 * load data from localStorage
+	 */
+	load() {
+		let item
+		if ((item = this.storage.getItem(this.namespace)) !== null) {
+			this.data = assign(this.data,this.parse(item))
+		}
+	}
+
+	/**
+	 * Set value to key
+	 * @param {string} key 
+	 * @param {any} value 
+	 */
+	set(key, value) {
+		if (arguments.length === 1) {
+			this.data = key
+		}
+		else {
+			this.data[key] = value
+		}
+		this.storage.setItem(this.namespace, this.stringify(this.data))
+	}
+
+	/**
+	 * Get value of key
+	 * @param {string} key
+	 */
+	get(key) {
+		if (!key) {
+			return this.data
+		}
+		return this.data[key]
+	}
+
+	/**
+	 * Get Vuex plugin from options
+	 * @param {Vuex.Store} store 
+	 */
+	plugin() {
+		return store => {
+			this.data = store.state
+			this.load()
+			store.replaceState(this.get())
+			store.subscribe((mutation, state) => {
+				this.set(this.data)
+			})
+		}
 	}
 }
-const vuejsStorage = {
-	/**
-	 * Vue.js plugin
-	 * @param {Vue} Vue 
-	 * @param {Object=} config 
-	 */
-	install(Vue, config) {
-		Vue.mixin({
-			beforeCreate() {
-				if ('storage' in this.$options) {
-					if (typeof this.$options.storage === 'function') {
-						this.$options.storage = this.$options.storage()
-					}
 
-					//storage object can be access from this.$storage
-					this.$storage = this.$options.storage
-
-					let { data, option } = this.$options.storage
-
-					let tmp
-					if ((tmp = option.storage.getItem(option.name)) !== null) {//if data exists
-						data = assign(data, option.parse(tmp))//override
-					}
-
-					this.$options.data = assign(this.$options.data, data)//override
-
-					option.storage.setItem(option.name, option.stringify(data))
-
-					if (!('watch' in this.$options)) {
-						this.$options.watch = {} //watch
-					}
-					Object.keys(data).forEach(k => {
-						this.$options.watch[k] = v => { //update and save
-							data[k] = v
-							option.storage.setItem(option.name, option.stringify(data))
-						}
-					})
+export function install(Vue, config) {
+	Vue.mixin({
+		beforeCreate() {
+			if ('storage' in this.$options) {
+				let storage = this.$options.storage
+				if (typeof this.$options.storage === 'function') {//function syntax
+					storage = this.$options.storage()
 				}
-			}
-		})
-	},
-	Data
-}
+				if (!(storage instanceof Storage)) {
+					throw new Error('"Storage" must be a "Storage" object')
+				}
 
-export default vuejsStorage
+				this.$options.data = assign(this.$options.data, storage.get()) //set data
+
+				if (!('watch' in this.$options)) {
+					this.$options.watch = {}
+				}
+				for (let key in storage.get()) {//create watchers
+					let watcher = v => { }
+					if (key in this.$options.watch) {//backup original watcher
+						watcher = this.$options.watch[key]
+					}
+					this.$options.watch[key] = value => {
+						storage.set(key, value)
+						watcher(value)
+					}
+				}
+
+				this.$storage = storage
+			}
+		}
+	})
+}

@@ -1,7 +1,7 @@
 {
 	"name": "vuejs-storage",
-	"version": "0.3.1",
-	"main": "src/index.js",
+	"version": "0.4.1",
+	"main": "dist/vuejs-storage.js",
 	"license": "MIT",
 	"devDependencies": {
 		"babel-core": "^6.26.0",

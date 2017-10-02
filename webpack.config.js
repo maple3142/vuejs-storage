@@ -3,7 +3,7 @@ var webpack = require('webpack')
 var prod = (process.env.NODE_ENV === 'production')
 
 module.exports = {
-	entry: path.join(__dirname, 'src', 'index.js'),
+	entry: path.join(__dirname, 'src', 'main.js'),
 	output: {
 		filename: prod ? 'vuejs-storage.min.js' : 'vuejs-storage.js',
 		path: path.join(__dirname, 'dist'),
