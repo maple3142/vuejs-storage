@@ -7,6 +7,8 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>example</title>
 	<script src="dist/vuejs-storage.js"></script>
+	<!--import from cdn-->
+	<!--script src="https://unpkg.com/vuejs-storage"></script-->
 	<script src="https://unpkg.com/vue"></script>
 	<script src="https://unpkg.com/vuex"></script>
 </head>
@@ -20,6 +22,12 @@
 		<div>
 			<span>Vuex counter: {{vuexcount}}</span>
 			<button @click="vuexadd">add</button>
+		</div>
+	</div>
+	<div id="app2">
+		<div>
+			<span>sessionStorage counter: {{count}} {{message}}</span>
+			<button @click="add">add</button>
 		</div>
 	</div>
 	<script>
@@ -57,6 +65,28 @@
 			computed: {
 				vuexcount() {
 					return store.state.count
+				}
+			}
+		})
+
+		//advanced example
+		var app2 = new Vue({
+			el: '#app2',
+			data: {
+				message: 'Hello'
+			},
+			storage: function () { //function syntax is ok
+				return new vuejsStorage.Storage({
+					data: {
+						count: 0
+					},
+					storage: sessionStorage,
+					namespace: 'app2'
+				})
+			},
+			methods: {
+				add: function () {
+					this.count++
 				}
 			}
 		})

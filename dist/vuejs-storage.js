@@ -97,7 +97,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var count = 0;
+var index = 0;
 
 /**
  * Storage
@@ -123,8 +123,7 @@ var Storage = exports.Storage = function () {
 		    stringify = _ref$stringify === undefined ? JSON.stringify : _ref$stringify,
 		    _ref$storage = _ref.storage,
 		    storage = _ref$storage === undefined ? window.localStorage : _ref$storage,
-		    _ref$namespace = _ref.namespace,
-		    namespace = _ref$namespace === undefined ? 'vuejs-storage-' + count++ : _ref$namespace,
+		    namespace = _ref.namespace,
 		    _ref$data = _ref.data,
 		    data = _ref$data === undefined ? {} : _ref$data;
 
@@ -134,12 +133,13 @@ var Storage = exports.Storage = function () {
 		this.parse = parse;
 		this.stringify = stringify;
 		this.storage = storage;
+		if (namespace === undefined) {
+			//index should only increase when no namespace
+			namespace = 'vuejs-storage-' + index++;
+		}
 		this.namespace = namespace;
 
-		var item = void 0;
-		if ((item = storage.getItem(this.namespace)) !== null) {
-			this.data = this.parse(item);
-		}
+		this.load();
 	}
 
 	/**
@@ -181,7 +181,7 @@ var Storage = exports.Storage = function () {
 	}, {
 		key: 'get',
 		value: function get(key) {
-			if (!key) {
+			if (key === undefined) {
 				return this.data;
 			}
 			return this.data[key];
@@ -202,7 +202,7 @@ var Storage = exports.Storage = function () {
 				_this.load();
 				store.replaceState(_this.get());
 				store.subscribe(function (mutation, state) {
-					_this.set(_this.data);
+					_this.set(state);
 				});
 			};
 		}
@@ -224,10 +224,14 @@ function install(Vue, config) {
 						storage = _this2.$options.storage();
 					}
 					if (!(storage instanceof Storage)) {
-						throw new Error('"Storage" must be a "Storage" object');
+						throw new Error('"storage" must be a "Storage" object');
 					}
 
-					_this2.$options.data = (0, _lodash2.default)(_this2.$options.data, storage.get()); //set data
+					var data = _this2.$options.data;
+					if (typeof data === 'function') {
+						data = data();
+					}
+					_this2.$options.data = (0, _lodash2.default)(data, storage.get()); //set data
 
 					if (!('watch' in _this2.$options)) {
 						_this2.$options.watch = {};

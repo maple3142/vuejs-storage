@@ -1,6 +1,6 @@
 import assign from 'lodash.assignin'
 
-var count = 0
+var index = 0
 
 /**
  * Storage
@@ -21,7 +21,7 @@ export class Storage {
 		parse = JSON.parse,
 		stringify = JSON.stringify,
 		storage = window.localStorage,
-		namespace = `vuejs-storage-${count++}`,
+		namespace,
 		data = {}
 	} = {}) {
 
@@ -29,12 +29,12 @@ export class Storage {
 		this.parse = parse
 		this.stringify = stringify
 		this.storage = storage
+		if (namespace === undefined) {//index should only increase when no namespace
+			namespace = `vuejs-storage-${index++}`
+		}
 		this.namespace = namespace
 
-		let item
-		if ((item = storage.getItem(this.namespace)) !== null) {
-			this.data = this.parse(item)
-		}
+		this.load()
 	}
 
 	/**
@@ -43,7 +43,7 @@ export class Storage {
 	load() {
 		let item
 		if ((item = this.storage.getItem(this.namespace)) !== null) {
-			this.data = assign(this.data,this.parse(item))
+			this.data = assign(this.data, this.parse(item))
 		}
 	}
 
@@ -67,7 +67,7 @@ export class Storage {
 	 * @param {string} key
 	 */
 	get(key) {
-		if (!key) {
+		if (key === undefined) {
 			return this.data
 		}
 		return this.data[key]
@@ -83,7 +83,7 @@ export class Storage {
 			this.load()
 			store.replaceState(this.get())
 			store.subscribe((mutation, state) => {
-				this.set(this.data)
+				this.set(state)
 			})
 		}
 	}
@@ -98,10 +98,14 @@ export function install(Vue, config) {
 					storage = this.$options.storage()
 				}
 				if (!(storage instanceof Storage)) {
-					throw new Error('"Storage" must be a "Storage" object')
+					throw new Error('"storage" must be a "Storage" object')
 				}
 
-				this.$options.data = assign(this.$options.data, storage.get()) //set data
+				let data = this.$options.data
+				if (typeof data === 'function') {
+					data = data()
+				}
+				this.$options.data = assign(data, storage.get()) //set data
 
 				if (!('watch' in this.$options)) {
 					this.$options.watch = {}
