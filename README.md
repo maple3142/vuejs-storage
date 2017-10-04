@@ -1,9 +1,78 @@
-vuejs-storage
-==============
+# vuejs-storage
 *vue.js and vuex plugin to persistence data with localStorage/sessionStorage*
---------------
 
-[example code](https://github.com/maple3142/vuejs-storage/blob/master/example.html)
+## Usage
+
+```js
+//in webpack environment:
+import vuejsStorage from 'vuejs-storage'
+//in browser script tag:
+window.vuejsStorage
+
+Vue.use(vuejsStorage)
+
+//vue example
+new Vue({
+  //...
+  data: {
+    //data here won't be saved
+  },
+  storage: new vuejsStorage.Storage({
+    data: {
+      count: 0//this will be saved in localStorage
+    },
+    namespace: 'my-namespace',
+  })
+})
+
+//vuex example
+const store = new Vuex.Store({
+  //state...
+  plugins: [
+    new vuejsStorage.Storage({
+      //don't use "data" here
+      namespace: 'my-namespace',
+      storage: window.sessionStorage //if you want to use sessionStorage instead of localStorage
+    }).plugin() //call plugin() to get Vuex plugin
+  ]
+})
+```
+
+## API
+
+### `vuejsStorage`
+
+Vue.js plugin
+
+```javascript
+Vue.use(vuejsStorage)
+```
+
+### `new vuejsStorage.Storage(option)`
+
+Create a Storage instance
+
+```javascript
+const storage=new vuejsStorage.Storage({
+	data: {
+		//vue.js data object, not working when used as Vuex plugin, default: {}
+	},
+	storage: sessionStorage, //any object has 'setItem' 'getItem' api, default: localStorage
+	namespace: 'ns', //a string, default: `vuejs-storage-${index++}`
+	parse: JSON.parse, //deserialize function, default: JSON.parse
+	stringify: JSON.stringify //serialize function, default: JSON.stringify
+})
+```
+
+### `Storage#plugin()`
+
+Get Vuex plugin
+
+```javascript
+let vuexplugin = storage.plugin()
+```
+
+## [Example](https://rawgit.com/maple3142/vuejs-storage/master/example.html)
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +119,9 @@ vuejs-storage
           state.count++
         }
       },
-      plugins: [new vuejsStorage.Storage({ namespace: 'vuex-app' }).plugin()]
+      plugins: [
+      new vuejsStorage.Storage({ namespace: 'vuex-app' }).plugin()
+    ]
     })
 
     var app = new Vue({
@@ -103,6 +174,6 @@ vuejs-storage
 </html>
 ```
 
-[codepen example](https://codepen.io/maple3142/full/eGNMBK/)
-[simple todo list](https://codepen.io/maple3142/full/MEagWw/)
------------
+## Other Example
+
+### [Persistant todo list](https://codepen.io/maple3142/full/MEagWw/)

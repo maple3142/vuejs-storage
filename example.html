@@ -43,7 +43,9 @@
 					state.count++
 				}
 			},
-			plugins: [new vuejsStorage.Storage({ namespace: 'vuex-app' }).plugin()]
+			plugins: [
+				new vuejsStorage.Storage({ namespace: 'vuex-app' }).plugin()
+			]
 		})
 
 		var app = new Vue({
