@@ -1,6 +1,9 @@
 # vuejs-storage
 *vue.js and vuex plugin to persistence data with localStorage/sessionStorage*
 
+[![Build Status](https://travis-ci.org/maple3142/vuejs-storage.svg?branch=master)](https://travis-ci.org/maple3142/vuejs-storage)
+
+
 ## Usage
 
 ```js
