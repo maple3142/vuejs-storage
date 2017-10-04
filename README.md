@@ -57,13 +57,13 @@ Create a Storage instance
 
 ```javascript
 const storage=new vuejsStorage.Storage({
-	data: {
-		//vue.js data object, not working when used as Vuex plugin, default: {}
-	},
-	storage: sessionStorage, //any object has 'setItem' 'getItem' api, default: localStorage
-	namespace: 'ns', //a string, default: `vuejs-storage-${index++}`
-	parse: JSON.parse, //deserialize function, default: JSON.parse
-	stringify: JSON.stringify //serialize function, default: JSON.stringify
+  data: {
+    //vue.js data object, not working when used as Vuex plugin, default: {}
+  },
+  storage: sessionStorage, //any object has 'setItem' 'getItem' api, default: localStorage
+  namespace: 'ns', //a string, default: `vuejs-storage-${index++}`
+  parse: JSON.parse, //deserialize function, default: JSON.parse
+  stringify: JSON.stringify //serialize function, default: JSON.stringify
 })
 ```
 
@@ -123,13 +123,14 @@ let vuexplugin = storage.plugin()
         }
       },
       plugins: [
-      new vuejsStorage.Storage({ namespace: 'vuex-app' }).plugin()
-    ]
+        vuejsStorage({ namespace: 'vuex-app' }).plugin()
+        //call vuejsStorage(option) as function is same as `new vuejsStorage.Storage(option)`
+      ]
     })
 
     var app = new Vue({
       el: '#app',
-      storage: new vuejsStorage.Storage({
+      storage: new vuejsStorage.Storage({ //standard way to create storage
         data: {
           count: 0
         },
@@ -156,7 +157,14 @@ let vuexplugin = storage.plugin()
       data: {
         message: 'Hello'
       },
-      storage: function () { //function syntax is ok
+      storage: { //you can directly pass vuejsStorage.Storage option too
+        data: {
+          count: 0
+        },
+        storage: sessionStorage,
+        namespace: 'app2'
+      },
+      /*storage: function () { //function syntax is ok
         return new vuejsStorage.Storage({
           data: {
             count: 0
@@ -164,7 +172,7 @@ let vuexplugin = storage.plugin()
           storage: sessionStorage,
           namespace: 'app2'
         })
-      },
+      },*/
       methods: {
         add: function () {
           this.count++

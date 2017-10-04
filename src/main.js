@@ -98,7 +98,7 @@ function install(Vue, config) {
 					storage = this.$options.storage()
 				}
 				if (!(storage instanceof Storage)) {
-					throw new Error('"storage" must be a "Storage" object')
+					storage = new Storage(storage)
 				}
 
 				let data = this.$options.data
@@ -127,4 +127,4 @@ function install(Vue, config) {
 	})
 }
 
-export default {install,Storage}
+export default { install, Storage }

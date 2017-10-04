@@ -80,7 +80,13 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
-module.exports = __webpack_require__(1).default;
+var main = __webpack_require__(1).default;
+function vuejsStorage(option) {
+	return new main.Storage(option);
+}
+vuejsStorage.install = main.install;
+vuejsStorage.Storage = main.Storage;
+module.exports = vuejsStorage;
 
 /***/ }),
 /* 1 */
@@ -230,7 +236,7 @@ function install(Vue, config) {
 						storage = _this2.$options.storage();
 					}
 					if (!(storage instanceof Storage)) {
-						throw new Error('"storage" must be a "Storage" object');
+						storage = new Storage(storage);
 					}
 
 					var data = _this2.$options.data;
