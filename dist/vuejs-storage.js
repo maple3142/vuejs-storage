@@ -80,16 +80,22 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
+module.exports = __webpack_require__(1).default;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.Storage = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-exports.install = install;
-
-var _lodash = __webpack_require__(1);
+var _lodash = __webpack_require__(2);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -104,7 +110,7 @@ var index = 0;
  * @class
  */
 
-var Storage = exports.Storage = function () {
+var Storage = function () {
 	/**
   * Storage constructor
   * @constructor
@@ -261,8 +267,10 @@ function install(Vue, config) {
 	});
 }
 
+exports.default = { install: install, Storage: Storage };
+
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 /**

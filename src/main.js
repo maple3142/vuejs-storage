@@ -6,7 +6,7 @@ var index = 0
  * Storage
  * @class
  */
-export class Storage {
+class Storage {
 	/**
 	 * Storage constructor
 	 * @constructor
@@ -89,7 +89,7 @@ export class Storage {
 	}
 }
 
-export function install(Vue, config) {
+function install(Vue, config) {
 	Vue.mixin({
 		beforeCreate() {
 			if ('storage' in this.$options) {
@@ -126,3 +126,5 @@ export function install(Vue, config) {
 		}
 	})
 }
+
+export default {install,Storage}
