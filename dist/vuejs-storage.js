@@ -241,7 +241,7 @@ function install(Vue, config) {
 
 					var data = _this2.$options.data;
 					if (typeof data === 'function') {
-						data = data();
+						data = data.apply(_this2);
 					}
 					_this2.$options.data = (0, _lodash2.default)(data, storage.get()); //set data
 
