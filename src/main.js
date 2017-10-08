@@ -103,7 +103,7 @@ function install(Vue, config) {
 
 				let data = this.$options.data
 				if (typeof data === 'function') {
-					data = data()
+					data = data.apply(this)
 				}
 				this.$options.data = assign(data, storage.get()) //set data
 
