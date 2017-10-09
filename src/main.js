@@ -94,15 +94,15 @@ function install(Vue, config) {
 		beforeCreate() {
 			if ('storage' in this.$options) {
 				let storage = this.$options.storage
-				if (typeof this.$options.storage === 'function') {//function syntax
-					storage = this.$options.storage()
+				if (typeof this.$options.storage === 'function') { //storage(){...} syntax
+					storage = this.$options.storage.apply(this)
 				}
 				if (!(storage instanceof Storage)) {
 					storage = new Storage(storage)
 				}
 
 				let data = this.$options.data
-				if (typeof data === 'function') {
+				if (typeof data === 'function') { //data(){...} syntax
 					data = data.apply(this)
 				}
 				this.$options.data = assign(data, storage.get()) //set data
