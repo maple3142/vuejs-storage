@@ -117,7 +117,7 @@ function install(Vue, config) {
 					}
 					this.$options.watch[key] = value => {
 						storage.set(key, value)
-						watcher(value)
+						watcher.call(this,value)
 					}
 				}
 
