@@ -35,6 +35,14 @@ class Storage {
 		this.namespace = namespace
 
 		this.load()
+		this.save()
+	}
+
+	/**
+	 * save data to localStorage
+	 */
+	save() {
+		this.storage.setItem(this.namespace, this.stringify(this.data))
 	}
 
 	/**
@@ -59,7 +67,7 @@ class Storage {
 		else {
 			this.data[key] = value
 		}
-		this.storage.setItem(this.namespace, this.stringify(this.data))
+		this.save()
 	}
 
 	/**
@@ -71,6 +79,15 @@ class Storage {
 			return this.data
 		}
 		return this.data[key]
+	}
+
+	/**
+	 * Delete value of key
+	 * @param {string} key 
+	 */
+	del(key) {
+		delete this.data[key]
+		this.save()
 	}
 
 	/**
@@ -105,7 +122,19 @@ function install(Vue, config) {
 				if (typeof data === 'function') { //data(){...} syntax
 					data = data.apply(this)
 				}
-				this.$options.data = assign(data, storage.get()) //set data
+
+				//set data
+				let s=storage.get()
+				for (let k in s) {
+					if (k in data) { //make sure
+						data[k]=s[k]
+					}
+					else {
+						storage.del(k)
+					}
+				}
+				this.$options.data=data
+				// this.$options.data = assign(data, storage.get()) **this will cause a bug when user remove data**
 
 				if (!('watch' in this.$options)) {
 					this.$options.watch = {}
@@ -117,7 +146,7 @@ function install(Vue, config) {
 					}
 					this.$options.watch[key] = value => {
 						storage.set(key, value)
-						watcher.call(this,value)
+						watcher.call(this, value)
 					}
 				}
 

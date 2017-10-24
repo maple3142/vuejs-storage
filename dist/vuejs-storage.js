@@ -152,14 +152,25 @@ var Storage = function () {
 		this.namespace = namespace;
 
 		this.load();
+		this.save();
 	}
 
 	/**
-  * load data from localStorage
+  * save data to localStorage
   */
 
 
 	_createClass(Storage, [{
+		key: 'save',
+		value: function save() {
+			this.storage.setItem(this.namespace, this.stringify(this.data));
+		}
+
+		/**
+   * load data from localStorage
+   */
+
+	}, {
 		key: 'load',
 		value: function load() {
 			var item = void 0;
@@ -182,7 +193,7 @@ var Storage = function () {
 			} else {
 				this.data[key] = value;
 			}
-			this.storage.setItem(this.namespace, this.stringify(this.data));
+			this.save();
 		}
 
 		/**
@@ -197,6 +208,18 @@ var Storage = function () {
 				return this.data;
 			}
 			return this.data[key];
+		}
+
+		/**
+   * Delete value of key
+   * @param {string} key 
+   */
+
+	}, {
+		key: 'del',
+		value: function del(key) {
+			delete this.data[key];
+			this.save();
 		}
 
 		/**
@@ -244,7 +267,19 @@ function install(Vue, config) {
 						//data(){...} syntax
 						data = data.apply(_this2);
 					}
-					_this2.$options.data = (0, _lodash2.default)(data, storage.get()); //set data
+
+					//set data
+					var s = storage.get();
+					for (var k in s) {
+						if (k in data) {
+							//make sure
+							data[k] = s[k];
+						} else {
+							storage.del(k);
+						}
+					}
+					_this2.$options.data = data;
+					// this.$options.data = assign(data, storage.get()) **this will cause a bug when user remove data**
 
 					if (!('watch' in _this2.$options)) {
 						_this2.$options.watch = {};
@@ -259,7 +294,7 @@ function install(Vue, config) {
 						}
 						_this2.$options.watch[key] = function (value) {
 							storage.set(key, value);
-							watcher(value);
+							watcher.call(_this2, value);
 						};
 					};
 
