@@ -10,7 +10,7 @@
 //in webpack environment:
 import vuejsStorage from 'vuejs-storage'
 //in browser script tag:
-window.vuejsStorage
+const vuejsStorage = window.vuejsStorage
 
 Vue.use(vuejsStorage)
 
@@ -20,23 +20,23 @@ new Vue({
   data: {
     //data here won't be saved
   },
-  storage: new vuejsStorage.Storage({
+  storage: {
     data: {
       count: 0//this will be saved in localStorage
     },
     namespace: 'my-namespace',
-  })
+  }
 })
 
 //vuex example
 const store = new Vuex.Store({
   //state...
   plugins: [
-    new vuejsStorage.Storage({
+    vuejsStorage({
       //don't use "data" here
       namespace: 'my-namespace',
       storage: window.sessionStorage //if you want to use sessionStorage instead of localStorage
-    }).plugin() //call plugin() to get Vuex plugin
+    })
   ]
 })
 ```
@@ -45,34 +45,34 @@ const store = new Vuex.Store({
 
 ### `vuejsStorage`
 
-Vue.js plugin
+**Vue** plugin
 
 ```javascript
 Vue.use(vuejsStorage)
 ```
 
-### `new vuejsStorage.Storage(option)`
+### `vuejsStorage(option)`
 
-Create a Storage instance
+Create a **Vuex** plugin
 
 ```javascript
-const storage=new vuejsStorage.Storage({
-  data: {
-    //vue.js data object, not working when used as Vuex plugin, default: {}
-  },
-  storage: sessionStorage, //any object has 'setItem' 'getItem' api, default: localStorage
-  namespace: 'ns', //a string, default: `vuejs-storage-${index++}`
-  parse: JSON.parse, //deserialize function, default: JSON.parse
-  stringify: JSON.stringify //serialize function, default: JSON.stringify
-})
+const vuexplugin=vuejsStorage(/* option object*/)
 ```
 
-### `Storage#plugin()`
+### `option`
 
-Get Vuex plugin
+Option object, can be used when create **Vuex** plugin or in **Vue** option `storage` field
 
 ```javascript
-let vuexplugin = storage.plugin()
+{
+  data: {
+    //Vue data object,REQUIRED only in Vue's storage field
+  },
+  storage: sessionStorage, //any object has 'setItem' 'getItem' api, default: localStorage
+  namespace: 'ns', //a string, REQUIRED
+  parse: JSON.parse, //deserialize function, default: JSON.parse
+  stringify: JSON.stringify //serialize function, default: JSON.stringify
+}
 ```
 
 ## [Example](https://rawgit.com/maple3142/vuejs-storage/master/example.html)
@@ -109,6 +109,9 @@ let vuexplugin = storage.plugin()
       <button @click="add">add</button>
     </div>
   </div>
+  <div>
+    Try open this page in another tab.
+  </div>
   <script>
     Vue.use(Vuex)
     Vue.use(vuejsStorage)
@@ -123,19 +126,18 @@ let vuexplugin = storage.plugin()
         }
       },
       plugins: [
-        vuejsStorage({ namespace: 'vuex-app' }).plugin()
-        //call vuejsStorage(option) as function is same as `new vuejsStorage.Storage(option)`
+        vuejsStorage({ namespace: 'vuex-app' }) //call vuejsStorage with options will return a plugin
       ]
     })
 
     var app = new Vue({
       el: '#app',
-      storage: new vuejsStorage.Storage({ //standard way to create storage
+      storage: { //provide options in storage
         data: {
           count: 0
         },
         namespace: 'app'
-      }),
+      },
       methods: {
         add: function () {
           this.count++
@@ -157,22 +159,15 @@ let vuexplugin = storage.plugin()
       data: {
         message: 'Hello'
       },
-      storage: { //you can directly pass vuejsStorage.Storage option too
-        data: {
-          count: 0
-        },
-        storage: sessionStorage,
-        namespace: 'app2'
-      },
-      /*storage: function () { //function syntax is ok
-        return new vuejsStorage.Storage({
+      storage: function () { //function syntax is ok
+        return {
           data: {
             count: 0
           },
           storage: sessionStorage,
           namespace: 'app2'
-        })
-      },*/
+        }
+      },
       methods: {
         add: function () {
           this.count++

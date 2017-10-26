@@ -30,6 +30,9 @@
 			<button @click="add">add</button>
 		</div>
 	</div>
+	<div>
+		Try open this page in another tab.
+	</div>
 	<script>
 		Vue.use(Vuex)
 		Vue.use(vuejsStorage)
@@ -44,19 +47,18 @@
 				}
 			},
 			plugins: [
-				vuejsStorage({ namespace: 'vuex-app' }).plugin()
-				//call vuejsStorage(option) as function is same as `new vuejsStorage.Storage(option)`
+				vuejsStorage({ namespace: 'vuex-app' }) //call vuejsStorage with options will return a plugin
 			]
 		})
 
 		var app = new Vue({
 			el: '#app',
-			storage: new vuejsStorage.Storage({ //standard way to create storage
+			storage: { //provide options in storage
 				data: {
 					count: 0
 				},
 				namespace: 'app'
-			}),
+			},
 			methods: {
 				add: function () {
 					this.count++
@@ -78,22 +80,15 @@
 			data: {
 				message: 'Hello'
 			},
-			storage: { //you can directly pass vuejsStorage.Storage option too
-				data: {
-					count: 0
-				},
-				storage: sessionStorage,
-				namespace: 'app2'
-			},
-			/*storage: function () { //function syntax is ok
-				return new vuejsStorage.Storage({
+			storage: function () { //function syntax is ok
+				return {
 					data: {
 						count: 0
 					},
 					storage: sessionStorage,
 					namespace: 'app2'
-				})
-			},*/
+				}
+			},
 			methods: {
 				add: function () {
 					this.count++

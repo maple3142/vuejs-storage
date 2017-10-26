@@ -82,10 +82,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 var main = __webpack_require__(1).default;
 function vuejsStorage(option) {
-	return new main.Storage(option);
+	return main.createVuexPlugin(option);
 }
 vuejsStorage.install = main.install;
-vuejsStorage.Storage = main.Storage;
 module.exports = vuejsStorage;
 
 /***/ }),
@@ -99,217 +98,115 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _lodash = __webpack_require__(2);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+/**
+ * Create customize localStorage
+ * @param {Storage} storage a object should have setItem,getItem,removeItem, default: window.localStorage
+ */
+function create() {
+	var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+	    _ref$storage = _ref.storage,
+	    storage = _ref$storage === undefined ? window.localStorage : _ref$storage,
+	    _ref$stringify = _ref.stringify,
+	    stringify = _ref$stringify === undefined ? JSON.stringify : _ref$stringify,
+	    _ref$parse = _ref.parse,
+	    parse = _ref$parse === undefined ? JSON.parse : _ref$parse;
 
-var index = 0;
+	return {
+		setItem: function setItem(key, value) {
+			storage.setItem(key, stringify(value));
+		},
+		removeItem: function removeItem(key) {
+			storage.removeItem(key);
+		},
+		getItem: function getItem(key) {
+			return parse(storage.getItem(key));
+		}
+	};
+}
 
 /**
- * Storage
- * @class
+ * Create Vuex plugin
+ * @param {Object} option 
  */
-
-var Storage = function () {
-	/**
-  * Storage constructor
-  * @constructor
-  * @param {Object=} option option object
-  * @param {Object=} option.data data, same as "data" in vue options
-  * @param {String=} option.namespace Storage namespace, if not provide will auto generate a name by vuejs-storage count(unstable)
-  * @param {Storage=} option.storage localStorage/sessionStorage or something has similar api, default is window.localStorage
-  * @param {Function=} option.parse json parsing function, default is JSON.parse
-  * @param {Function=} option.stringify json stringifying function, default is JSON.stringify
-  */
-	function Storage() {
-		var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-		    _ref$parse = _ref.parse,
-		    parse = _ref$parse === undefined ? JSON.parse : _ref$parse,
-		    _ref$stringify = _ref.stringify,
-		    stringify = _ref$stringify === undefined ? JSON.stringify : _ref$stringify,
-		    _ref$storage = _ref.storage,
-		    storage = _ref$storage === undefined ? window.localStorage : _ref$storage,
-		    namespace = _ref.namespace,
-		    _ref$data = _ref.data,
-		    data = _ref$data === undefined ? {} : _ref$data;
-
-		_classCallCheck(this, Storage);
-
-		this.data = data;
-		this.parse = parse;
-		this.stringify = stringify;
-		this.storage = storage;
-		if (namespace === undefined) {
-			//index should only increase when no namespace
-			namespace = 'vuejs-storage-' + index++;
-		}
-		this.namespace = namespace;
-
-		this.load();
-		this.save();
+function createVuexPlugin(option) {
+	if (!('namespace' in option)) {
+		throw new Error('namespace required');
 	}
-
-	/**
-  * save data to localStorage
-  */
-
-
-	_createClass(Storage, [{
-		key: 'save',
-		value: function save() {
-			this.storage.setItem(this.namespace, this.stringify(this.data));
-		}
-
-		/**
-   * load data from localStorage
-   */
-
-	}, {
-		key: 'load',
-		value: function load() {
-			var item = void 0;
-			if ((item = this.storage.getItem(this.namespace)) !== null) {
-				this.data = (0, _lodash2.default)(this.data, this.parse(item));
-			}
-		}
-
-		/**
-   * Set value to key
-   * @param {string} key 
-   * @param {any} value 
-   */
-
-	}, {
-		key: 'set',
-		value: function set(key, value) {
-			if (arguments.length === 1) {
-				this.data = key;
-			} else {
-				this.data[key] = value;
-			}
-			this.save();
-		}
-
-		/**
-   * Get value of key
-   * @param {string} key
-   */
-
-	}, {
-		key: 'get',
-		value: function get(key) {
-			if (key === undefined) {
-				return this.data;
-			}
-			return this.data[key];
-		}
-
-		/**
-   * Delete value of key
-   * @param {string} key 
-   */
-
-	}, {
-		key: 'del',
-		value: function del(key) {
-			delete this.data[key];
-			this.save();
-		}
-
-		/**
-   * Get Vuex plugin from options
-   * @param {Vuex.Store} store 
-   */
-
-	}, {
-		key: 'plugin',
-		value: function plugin() {
-			var _this = this;
-
-			return function (store) {
-				_this.data = store.state;
-				_this.load();
-				store.replaceState(_this.get());
-				store.subscribe(function (mutation, state) {
-					_this.set(state);
-				});
-			};
-		}
-	}]);
-
-	return Storage;
-}();
+	var ls = create(option);
+	return function (store) {
+		var data = store.state;
+		data = (0, _lodash2.default)(data, ls.getItem(option.namespace)); //merge data
+		store.replaceState(data); //set state
+		store.subscribe(function (mutation, state) {
+			ls.setItem(option.namespace, state);
+		});
+	};
+}
 
 function install(Vue, config) {
 	Vue.mixin({
 		beforeCreate: function beforeCreate() {
-			var _this2 = this;
+			var _this = this;
 
 			if ('storage' in this.$options) {
 				(function () {
-					var storage = _this2.$options.storage;
-					if (typeof _this2.$options.storage === 'function') {
+					var option = _this.$options.storage;
+					if (typeof option === 'function') {
 						//storage(){...} syntax
-						storage = _this2.$options.storage.apply(_this2);
-					}
-					if (!(storage instanceof Storage)) {
-						storage = new Storage(storage);
+						option = option.apply(_this);
 					}
 
-					var data = _this2.$options.data;
+					if (!('namespace' in option)) {
+						throw new Error('namespace required');
+					}
+					if (!('namespace' in option)) {
+						throw new Error('data required');
+					}
+
+					var ls = create(option);
+					option.data = (0, _lodash2.default)(option.data, ls.getItem(option.namespace));
+
+					var data = _this.$options.data || {};
 					if (typeof data === 'function') {
 						//data(){...} syntax
-						data = data.apply(_this2);
+						data = data.apply(_this);
 					}
+					_this.$options.data = (0, _lodash2.default)(data, option.data); //merge storage's data into data
 
-					//set data
-					var s = storage.get();
-					for (var k in s) {
-						if (k in data) {
-							//make sure
-							data[k] = s[k];
-						} else {
-							storage.del(k);
-						}
-					}
-					_this2.$options.data = data;
-					// this.$options.data = assign(data, storage.get()) **this will cause a bug when user remove data**
-
-					if (!('watch' in _this2.$options)) {
-						_this2.$options.watch = {};
+					if (!('watch' in _this.$options)) {
+						_this.$options.watch = {};
 					}
 
 					var _loop = function _loop(key) {
 						//create watchers
 						var watcher = function watcher(v) {};
-						if (key in _this2.$options.watch) {
+						if (key in _this.$options.watch) {
 							//backup original watcher
-							watcher = _this2.$options.watch[key];
+							watcher = _this.$options.watch[key];
 						}
-						_this2.$options.watch[key] = function (value) {
-							storage.set(key, value);
-							watcher.call(_this2, value);
+						_this.$options.watch[key] = function (value) {
+							option.data[key] = value;
+							ls.setItem(option.namespace, option.data);
+							watcher.call(_this, value);
 						};
 					};
 
-					for (var key in storage.get()) {
+					for (var key in option.data) {
 						_loop(key);
 					}
-
-					_this2.$storage = storage;
 				})();
 			}
 		}
 	});
 }
 
-exports.default = { install: install, Storage: Storage };
+exports.default = { install: install, createVuexPlugin: createVuexPlugin };
 
 /***/ }),
 /* 2 */

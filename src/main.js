@@ -1,108 +1,43 @@
 import assign from 'lodash.assignin'
 
-var index = 0
+/**
+ * Create customize localStorage
+ * @param {Storage} storage a object should have setItem,getItem,removeItem, default: window.localStorage
+ */
+function create({
+	storage = window.localStorage,
+	stringify = JSON.stringify,
+	parse = JSON.parse
+} = {}) {
+	return {
+		setItem(key, value) {
+			storage.setItem(key, stringify(value))
+		},
+		removeItem(key) {
+			storage.removeItem(key)
+		},
+		getItem(key) {
+			return parse(storage.getItem(key))
+		}
+	}
+}
 
 /**
- * Storage
- * @class
+ * Create Vuex plugin
+ * @param {Object} option 
  */
-class Storage {
-	/**
-	 * Storage constructor
-	 * @constructor
-	 * @param {Object=} option option object
-	 * @param {Object=} option.data data, same as "data" in vue options
-	 * @param {String=} option.namespace Storage namespace, if not provide will auto generate a name by vuejs-storage count(unstable)
-	 * @param {Storage=} option.storage localStorage/sessionStorage or something has similar api, default is window.localStorage
-	 * @param {Function=} option.parse json parsing function, default is JSON.parse
-	 * @param {Function=} option.stringify json stringifying function, default is JSON.stringify
-	 */
-	constructor({
-		parse = JSON.parse,
-		stringify = JSON.stringify,
-		storage = window.localStorage,
-		namespace,
-		data = {}
-	} = {}) {
-
-		this.data = data
-		this.parse = parse
-		this.stringify = stringify
-		this.storage = storage
-		if (namespace === undefined) {//index should only increase when no namespace
-			namespace = `vuejs-storage-${index++}`
-		}
-		this.namespace = namespace
-
-		this.load()
-		this.save()
+function createVuexPlugin(option) {
+	if (!('namespace' in option)) {
+		throw new Error('namespace required')
 	}
-
-	/**
-	 * save data to localStorage
-	 */
-	save() {
-		this.storage.setItem(this.namespace, this.stringify(this.data))
-	}
-
-	/**
-	 * load data from localStorage
-	 */
-	load() {
-		let item
-		if ((item = this.storage.getItem(this.namespace)) !== null) {
-			this.data = assign(this.data, this.parse(item))
-		}
-	}
-
-	/**
-	 * Set value to key
-	 * @param {string} key 
-	 * @param {any} value 
-	 */
-	set(key, value) {
-		if (arguments.length === 1) {
-			this.data = key
-		}
-		else {
-			this.data[key] = value
-		}
-		this.save()
-	}
-
-	/**
-	 * Get value of key
-	 * @param {string} key
-	 */
-	get(key) {
-		if (key === undefined) {
-			return this.data
-		}
-		return this.data[key]
-	}
-
-	/**
-	 * Delete value of key
-	 * @param {string} key 
-	 */
-	del(key) {
-		delete this.data[key]
-		this.save()
-	}
-
-	/**
-	 * Get Vuex plugin from options
-	 * @param {Vuex.Store} store 
-	 */
-	plugin() {
-		return store => {
-			this.data = store.state
-			this.load()
-			store.replaceState(this.get())
-			store.subscribe((mutation, state) => {
-				this.set(state)
-			})
-		}
+	const ls = create(option)
+	return store => {
+		let data = store.state
+		data = assign(data, ls.getItem(option.namespace)) //merge data
+		store.replaceState(data) //set state
+		store.subscribe((mutation, state) => {
+			ls.setItem(option.namespace, state)
+		})
 	}
 }
 
@@ -110,50 +45,44 @@ function install(Vue, config) {
 	Vue.mixin({
 		beforeCreate() {
 			if ('storage' in this.$options) {
-				let storage = this.$options.storage
-				if (typeof this.$options.storage === 'function') { //storage(){...} syntax
-					storage = this.$options.storage.apply(this)
-				}
-				if (!(storage instanceof Storage)) {
-					storage = new Storage(storage)
+				let option = this.$options.storage
+				if (typeof option === 'function') { //storage(){...} syntax
+					option = option.apply(this)
 				}
 
-				let data = this.$options.data
+				if (!('namespace' in option)) {
+					throw new Error('namespace required')
+				}
+				if (!('namespace' in option)) {
+					throw new Error('data required')
+				}
+
+				let ls = create(option)
+				option.data = assign(option.data, ls.getItem(option.namespace))
+
+				let data = this.$options.data || {}
 				if (typeof data === 'function') { //data(){...} syntax
 					data = data.apply(this)
 				}
-
-				//set data
-				let s=storage.get()
-				for (let k in s) {
-					if (k in data) { //make sure
-						data[k]=s[k]
-					}
-					else {
-						storage.del(k)
-					}
-				}
-				this.$options.data=data
-				// this.$options.data = assign(data, storage.get()) **this will cause a bug when user remove data**
+				this.$options.data = assign(data, option.data) //merge storage's data into data
 
 				if (!('watch' in this.$options)) {
 					this.$options.watch = {}
 				}
-				for (let key in storage.get()) {//create watchers
+				for (let key in option.data) {//create watchers
 					let watcher = v => { }
 					if (key in this.$options.watch) {//backup original watcher
 						watcher = this.$options.watch[key]
 					}
 					this.$options.watch[key] = value => {
-						storage.set(key, value)
+						option.data[key] = value
+						ls.setItem(option.namespace, option.data)
 						watcher.call(this, value)
 					}
 				}
-
-				this.$storage = storage
 			}
 		}
 	})
 }
 
-export default { install, Storage }
+export default { install, createVuexPlugin }
