@@ -10,9 +10,6 @@ new Vuex.Store({
 import Vue from 'vue'
 new Vue({
 	storage: {
-		namespace: '',
-		data: {
-
-		}
+		namespace: ''
 	}
 })
