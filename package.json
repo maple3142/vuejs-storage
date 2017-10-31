@@ -1,6 +1,6 @@
 {
 	"name": "vuejs-storage",
-	"version": "0.9.0",
+	"version": "0.9.1",
 	"main": "./dist/vuejs-storage.js",
 	"types": "./types/vuejs-storage.d.ts",
 	"license": "MIT",
