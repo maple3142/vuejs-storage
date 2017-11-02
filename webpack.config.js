@@ -3,7 +3,7 @@ var webpack = require('webpack')
 var prod = (process.env.NODE_ENV === 'production')
 
 module.exports = {
-	entry: path.join(__dirname, 'src', 'entry.js'),
+	entry: path.join(__dirname, 'src', 'index.ts'),
 	output: {
 		filename: prod ? 'vuejs-storage.min.js' : 'vuejs-storage.js',
 		path: path.join(__dirname, 'dist'),
@@ -11,16 +11,15 @@ module.exports = {
 		library: ['vuejsStorage']
 	},
 	module: {
-		loaders: [
+		rules: [
 			{
-				loader: 'babel-loader',
-				test: /\.js/,
-				exclude: /node_modules/
+				loader: 'ts-loader',
+				test: /\.ts/
 			}
 		]
 	},
 	resolve: {
-		extensions: ['.js']
+		extensions: ['.ts']
 	},
 	devtool: 'source-map',
 	plugins: prod ? [
