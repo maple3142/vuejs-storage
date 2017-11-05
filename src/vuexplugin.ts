@@ -1,4 +1,4 @@
-import { Store, VuexPlugin, Option } from './interfaces'
+import { Store, VuexPlugin, VuexOption } from './interfaces'
 
 import { createLSStorage } from './lsstorage'
 import { assign } from './assign'
@@ -6,7 +6,7 @@ import { assign } from './assign'
 /**
  * Create Vuex plugin
  */
-export function createVuexPlugin(option: Option): VuexPlugin<Object> {
+export function createVuexPlugin(option: VuexOption): VuexPlugin<Object> {
 	const ls = createLSStorage(option)
 	return (store: Store<Object>) => {
 		let data = store.state
