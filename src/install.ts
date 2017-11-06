@@ -2,7 +2,7 @@ import { VueConstructor, StorageOption } from './interfaces'
 
 import { createLSStorage } from './lsstorage'
 
-const assign = Object.assign
+const assign = (<any>Object).assign
 
 export function install(Vue: VueConstructor) {
 	Vue.mixin({

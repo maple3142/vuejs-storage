@@ -33,8 +33,8 @@
 	"scripts": {
 		"build": "cross-env NODE_ENV=development webpack",
 		"prod": "cross-env NODE_ENV=production webpack",
-		"all": "cross-env NODE_ENV=development webpack && cross-env NODE_ENV=production webpack",
-		"test": "cross-env NODE_ENV=development webpack && cross-env NODE_ENV=production webpack"
+		"all": "yarn build && yarn prod",
+		"test": "karma start --single-run && yarn all"
 	},
 	"repository": {
 		"type": "git",

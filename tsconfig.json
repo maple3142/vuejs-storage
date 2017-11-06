@@ -7,6 +7,6 @@
 			"lodash.assignin"
 		],
 		"module": "commonjs",
-		"target": "es2015"
+		"target": "es5"
 	}
 }

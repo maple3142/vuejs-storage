@@ -83,15 +83,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Create customize localStorage
  */
-function createLSStorage({ storage = window.localStorage, stringify = JSON.stringify, parse = JSON.parse }) {
+function createLSStorage(_a) {
+    var _b = _a.storage, storage = _b === void 0 ? window.localStorage : _b, _c = _a.stringify, stringify = _c === void 0 ? JSON.stringify : _c, _d = _a.parse, parse = _d === void 0 ? JSON.parse : _d;
     return {
-        setItem(key, value) {
+        setItem: function (key, value) {
             storage.setItem(key, stringify(value));
         },
-        removeItem(key) {
+        removeItem: function (key) {
             storage.removeItem(key);
         },
-        getItem(key) {
+        getItem: function (key) {
             return parse(storage.getItem(key));
         }
     };
@@ -106,9 +107,9 @@ exports.createLSStorage = createLSStorage;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const install_1 = __webpack_require__(2);
-const vuexplugin_1 = __webpack_require__(3);
-const vuejsStorage = function (option) {
+var install_1 = __webpack_require__(2);
+var vuexplugin_1 = __webpack_require__(3);
+var vuejsStorage = function (option) {
     return vuexplugin_1.createVuexPlugin(option);
 };
 vuejsStorage.install = install_1.install;
@@ -122,38 +123,43 @@ module.exports = vuejsStorage;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const lsstorage_1 = __webpack_require__(0);
-const assign = Object.assign;
+var lsstorage_1 = __webpack_require__(0);
+var assign = Object.assign;
 function install(Vue) {
     Vue.mixin({
-        beforeCreate() {
+        beforeCreate: function () {
+            var _this = this;
             if ('storage' in this.$options) {
-                let option = this.$options.storage;
+                var option_1 = this.$options.storage;
                 if (this.$options.storage instanceof Function) {
-                    option = this.$options.storage.apply(this);
+                    option_1 = this.$options.storage.apply(this);
                 }
-                const ls = lsstorage_1.createLSStorage(option);
-                option.data = assign(option.data, ls.getItem(option.namespace));
-                ls.setItem(option.namespace, option.data);
-                let data = this.$options.data || {};
+                var ls_1 = lsstorage_1.createLSStorage(option_1);
+                option_1.data = assign(option_1.data, ls_1.getItem(option_1.namespace));
+                ls_1.setItem(option_1.namespace, option_1.data);
+                var data = this.$options.data || {};
                 if (this.$options.data instanceof Function) {
                     data = this.$options.data.apply(this);
                 }
-                this.$options.data = assign(data, option.data); //merge storage's data into data
+                this.$options.data = assign(data, option_1.data); //merge storage's data into data
                 //if no 'watch' option
                 if (!('watch' in this.$options)) {
                     this.$options.watch = {};
                 }
-                for (let key in option.data) {
-                    let watcher;
-                    if (key in this.$options.watch) {
-                        watcher = this.$options.watch[key];
+                var _loop_1 = function (key) {
+                    var watcher;
+                    if (key in this_1.$options.watch) {
+                        watcher = this_1.$options.watch[key];
                     }
-                    this.$options.watch[key] = value => {
-                        option.data[key] = value;
-                        ls.setItem(option.namespace, option.data);
-                        watcher.call(this, value);
+                    this_1.$options.watch[key] = function (value) {
+                        option_1.data[key] = value;
+                        ls_1.setItem(option_1.namespace, option_1.data);
+                        watcher.call(_this, value);
                     };
+                };
+                var this_1 = this;
+                for (var key in option_1.data) {
+                    _loop_1(key);
                 }
             }
         }
@@ -169,18 +175,18 @@ exports.install = install;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const lsstorage_1 = __webpack_require__(0);
-const assign = Object.assign;
+var lsstorage_1 = __webpack_require__(0);
+var assign = Object.assign;
 /**
  * Create Vuex plugin
  */
 function createVuexPlugin(option) {
-    const ls = lsstorage_1.createLSStorage(option);
-    return (store) => {
-        let data = store.state;
+    var ls = lsstorage_1.createLSStorage(option);
+    return function (store) {
+        var data = store.state;
         data = assign(data, ls.getItem(option.namespace)); //merge data
         store.replaceState(data); //set state
-        store.subscribe((mutation, state) => {
+        store.subscribe(function (mutation, state) {
             ls.setItem(option.namespace, state);
         });
     };
