@@ -1,7 +1,8 @@
 import { VueConstructor, StorageOption } from './interfaces'
 
 import { createLSStorage } from './lsstorage'
-import { assign } from './assign'
+
+const assign = Object.assign
 
 export function install(Vue: VueConstructor) {
 	Vue.mixin({
@@ -14,6 +15,7 @@ export function install(Vue: VueConstructor) {
 
 				const ls = createLSStorage(option)
 				option.data = assign(option.data, ls.getItem(option.namespace))
+				ls.setItem(option.namespace, option.data)
 
 				let data = this.$options.data || {}
 				if (this.$options.data instanceof Function) { //data(){...} syntax
@@ -26,7 +28,7 @@ export function install(Vue: VueConstructor) {
 					this.$options.watch = {}
 				}
 				for (let key in option.data) {//create watchers
-					let watcher: Function = () => { }
+					let watcher: Function
 					if (key in this.$options.watch) {//backup original watcher
 						watcher = <Function>this.$options.watch[key]
 					}

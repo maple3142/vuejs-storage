@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,20 +79,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Create customize localStorage
  */
-function createLSStorage(_a) {
-    var _b = _a.storage, storage = _b === void 0 ? window.localStorage : _b, _c = _a.stringify, stringify = _c === void 0 ? JSON.stringify : _c, _d = _a.parse, parse = _d === void 0 ? JSON.parse : _d;
+function createLSStorage({ storage = window.localStorage, stringify = JSON.stringify, parse = JSON.parse }) {
     return {
-        setItem: function (key, value) {
+        setItem(key, value) {
             storage.setItem(key, stringify(value));
         },
-        removeItem: function (key) {
+        removeItem(key) {
             storage.removeItem(key);
         },
-        getItem: function (key) {
+        getItem(key) {
             return parse(storage.getItem(key));
         }
     };
@@ -106,14 +105,14 @@ exports.createLSStorage = createLSStorage;
 
 "use strict";
 
-exports.__esModule = true;
-function assign(dest, source) {
-    for (var k in source) {
-        dest[k] = source[k];
-    }
-    return dest;
-}
-exports.assign = assign;
+Object.defineProperty(exports, "__esModule", { value: true });
+const install_1 = __webpack_require__(2);
+const vuexplugin_1 = __webpack_require__(3);
+const vuejsStorage = function (option) {
+    return vuexplugin_1.createVuexPlugin(option);
+};
+vuejsStorage.install = install_1.install;
+module.exports = vuejsStorage;
 
 
 /***/ }),
@@ -122,59 +121,39 @@ exports.assign = assign;
 
 "use strict";
 
-exports.__esModule = true;
-var install_1 = __webpack_require__(3);
-var vuexplugin_1 = __webpack_require__(4);
-var vuejsStorage = function (option) {
-    return vuexplugin_1.createVuexPlugin(option);
-};
-vuejsStorage.install = install_1.install;
-module.exports = vuejsStorage;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-var lsstorage_1 = __webpack_require__(0);
-var assign_1 = __webpack_require__(1);
+Object.defineProperty(exports, "__esModule", { value: true });
+const lsstorage_1 = __webpack_require__(0);
+const assign = Object.assign;
 function install(Vue) {
     Vue.mixin({
-        beforeCreate: function () {
-            var _this = this;
+        beforeCreate() {
             if ('storage' in this.$options) {
-                var option_1 = this.$options.storage;
+                let option = this.$options.storage;
                 if (this.$options.storage instanceof Function) {
-                    option_1 = this.$options.storage.apply(this);
+                    option = this.$options.storage.apply(this);
                 }
-                var ls_1 = lsstorage_1.createLSStorage(option_1);
-                option_1.data = assign_1.assign(option_1.data, ls_1.getItem(option_1.namespace));
-                var data = this.$options.data || {};
+                const ls = lsstorage_1.createLSStorage(option);
+                option.data = assign(option.data, ls.getItem(option.namespace));
+                ls.setItem(option.namespace, option.data);
+                let data = this.$options.data || {};
                 if (this.$options.data instanceof Function) {
                     data = this.$options.data.apply(this);
                 }
-                this.$options.data = assign_1.assign(data, option_1.data); //merge storage's data into data
+                this.$options.data = assign(data, option.data); //merge storage's data into data
                 //if no 'watch' option
                 if (!('watch' in this.$options)) {
                     this.$options.watch = {};
                 }
-                var _loop_1 = function (key) {
-                    var watcher = function () { };
-                    if (key in this_1.$options.watch) {
-                        watcher = this_1.$options.watch[key];
+                for (let key in option.data) {
+                    let watcher;
+                    if (key in this.$options.watch) {
+                        watcher = this.$options.watch[key];
                     }
-                    this_1.$options.watch[key] = function (value) {
-                        option_1.data[key] = value;
-                        ls_1.setItem(option_1.namespace, option_1.data);
-                        watcher.call(_this, value);
+                    this.$options.watch[key] = value => {
+                        option.data[key] = value;
+                        ls.setItem(option.namespace, option.data);
+                        watcher.call(this, value);
                     };
-                };
-                var this_1 = this;
-                for (var key in option_1.data) {
-                    _loop_1(key);
                 }
             }
         }
@@ -184,24 +163,24 @@ exports.install = install;
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-exports.__esModule = true;
-var lsstorage_1 = __webpack_require__(0);
-var assign_1 = __webpack_require__(1);
+Object.defineProperty(exports, "__esModule", { value: true });
+const lsstorage_1 = __webpack_require__(0);
+const assign = Object.assign;
 /**
  * Create Vuex plugin
  */
 function createVuexPlugin(option) {
-    var ls = lsstorage_1.createLSStorage(option);
-    return function (store) {
-        var data = store.state;
-        data = assign_1.assign(data, ls.getItem(option.namespace)); //merge data
+    const ls = lsstorage_1.createLSStorage(option);
+    return (store) => {
+        let data = store.state;
+        data = assign(data, ls.getItem(option.namespace)); //merge data
         store.replaceState(data); //set state
-        store.subscribe(function (mutation, state) {
+        store.subscribe((mutation, state) => {
             ls.setItem(option.namespace, state);
         });
     };

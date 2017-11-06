@@ -2,7 +2,11 @@
 	"compilerOptions": {
 		"sourceMap": true,
 		"types": [
-			"mocha"
-		]
+			"mocha",
+			"chai",
+			"lodash.assignin"
+		],
+		"module": "commonjs",
+		"target": "es2015"
 	}
 }

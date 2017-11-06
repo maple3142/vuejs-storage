@@ -3,7 +3,7 @@ module.exports = function (config) {
 		basePath: '',
 		frameworks: ['mocha', 'chai', 'karma-typescript'],
 		files: [
-			'test/**/*.js',
+			'test/**/*.ts',
 			'src/**/*.ts'
 		],
 		exclude: [
@@ -13,12 +13,8 @@ module.exports = function (config) {
 		},
 		karmaTypescriptConfig: {
 			bundlerOptions: {
-				resolve: {
-					extensions: [
-						'.ts',
-						'.js'
-					]					
-				}
+				entrypoints: /test.*\.ts$/,
+				exclude: ["vue/types/vue", "vuex/types/index"]
 			},
 			compilerOptions: {
 				module: 'commonjs'

@@ -1,7 +1,8 @@
 import { Store, VuexPlugin, VuexOption } from './interfaces'
 
 import { createLSStorage } from './lsstorage'
-import { assign } from './assign'
+
+const assign = Object.assign
 
 /**
  * Create Vuex plugin

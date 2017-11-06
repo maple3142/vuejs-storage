@@ -2,6 +2,20 @@
 # yarn lockfile v1
 
 
+"@types/chai@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.0.4.tgz#fe86315d9a66827feeb16f73bc954688ec950e18"
+
+"@types/lodash.assignin@^4.2.3":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/@types/lodash.assignin/-/lodash.assignin-4.2.3.tgz#74f11b4df2e3bee39981ed871171a750843e66a1"
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*":
+  version "4.14.82"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.82.tgz#18948897f415ef199a93156a66ef7ce1d0d005b9"
+
 "@types/mocha@^2.2.44":
   version "2.2.44"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.44.tgz#1d4a798e53f35212fd5ad4d04050620171cd5b5e"
