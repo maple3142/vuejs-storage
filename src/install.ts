@@ -9,7 +9,8 @@ export function install(Vue: VueConstructor) {
 		beforeCreate() {
 			if ('storage' in this.$options) {
 				let option: StorageOption = this.$options.storage
-				if (this.$options.storage instanceof Function) { //storage(){...} syntax	
+				if (this.$options.storage instanceof Function) {
+					//storage(){...} syntax
 					option = this.$options.storage.apply(this)
 				}
 
@@ -18,7 +19,8 @@ export function install(Vue: VueConstructor) {
 				ls.setItem(option.namespace, option.data)
 
 				let data = this.$options.data || {}
-				if (this.$options.data instanceof Function) { //data(){...} syntax
+				if (this.$options.data instanceof Function) {
+					//data(){...} syntax
 					data = this.$options.data.apply(this)
 				}
 				this.$options.data = assign(data, option.data) //merge storage's data into data
@@ -27,15 +29,17 @@ export function install(Vue: VueConstructor) {
 				if (!('watch' in this.$options)) {
 					this.$options.watch = {}
 				}
-				for (let key in option.data) {//create watchers
-					let watcher: Function
-					if (key in this.$options.watch) {//backup original watcher
+				for (let key in option.data) {
+					//create watchers
+					let watcher: Function = null
+					if (key in this.$options.watch) {
+						//backup original watcher
 						watcher = <Function>this.$options.watch[key]
 					}
 					this.$options.watch[key] = value => {
 						option.data[key] = value
 						ls.setItem(option.namespace, option.data)
-						watcher.call(this, value)
+						if (watcher !== null) watcher.call(this, value)
 					}
 				}
 			}

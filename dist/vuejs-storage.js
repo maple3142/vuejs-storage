@@ -132,6 +132,7 @@ function install(Vue) {
             if ('storage' in this.$options) {
                 var option_1 = this.$options.storage;
                 if (this.$options.storage instanceof Function) {
+                    //storage(){...} syntax
                     option_1 = this.$options.storage.apply(this);
                 }
                 var ls_1 = lsstorage_1.createLSStorage(option_1);
@@ -139,6 +140,7 @@ function install(Vue) {
                 ls_1.setItem(option_1.namespace, option_1.data);
                 var data = this.$options.data || {};
                 if (this.$options.data instanceof Function) {
+                    //data(){...} syntax
                     data = this.$options.data.apply(this);
                 }
                 this.$options.data = assign(data, option_1.data); //merge storage's data into data
@@ -147,14 +149,17 @@ function install(Vue) {
                     this.$options.watch = {};
                 }
                 var _loop_1 = function (key) {
-                    var watcher;
+                    //create watchers
+                    var watcher = null;
                     if (key in this_1.$options.watch) {
+                        //backup original watcher
                         watcher = this_1.$options.watch[key];
                     }
                     this_1.$options.watch[key] = function (value) {
                         option_1.data[key] = value;
                         ls_1.setItem(option_1.namespace, option_1.data);
-                        watcher.call(_this, value);
+                        if (watcher !== null)
+                            watcher.call(_this, value);
                     };
                 };
                 var this_1 = this;
