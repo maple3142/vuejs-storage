@@ -1,6 +1,6 @@
 {
 	"name": "vuejs-storage",
-	"version": "1.0.3",
+	"version": "1.1.0",
 	"main": "./dist/vuejs-storage.js",
 	"types": "./types/vuejs-storage.d.ts",
 	"license": "MIT",
@@ -16,7 +16,6 @@
 		"@types/lodash.assignin": "^4.2.3",
 		"@types/mocha": "^2.2.44",
 		"chai": "^4.1.2",
-		"cross-env": "^5.0.5",
 		"karma": "^2.0.0",
 		"karma-chai": "^0.1.0",
 		"karma-chrome-launcher": "^2.2.0",
@@ -26,15 +25,15 @@
 		"mocha": "^5.0.4",
 		"ts-loader": "^4.0.1",
 		"typescript": "^2.6.1",
+		"uglifyjs-webpack-plugin": "^1.2.3",
 		"vue": "^2.5.2",
 		"vuex": "^3.0.1",
-		"webpack": "^4.1.1"
+		"webpack": "^4.1.1",
+		"webpack-cli": "^2.0.12"
 	},
 	"scripts": {
-		"build": "cross-env NODE_ENV=development webpack",
-		"prod": "cross-env NODE_ENV=production webpack",
-		"all": "yarn build && yarn prod",
-		"test": "karma start --single-run && yarn all"
+		"build": "webpack --mode production",
+		"test": "karma start --single-run"
 	},
 	"repository": {
 		"type": "git",

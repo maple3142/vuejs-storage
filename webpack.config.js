@@ -1,11 +1,11 @@
-var path = require('path')
-var webpack = require('webpack')
-var prod = (process.env.NODE_ENV === 'production')
+const path = require('path')
+const webpack = require('webpack')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
 	entry: path.join(__dirname, 'src', 'index.ts'),
 	output: {
-		filename: prod ? 'vuejs-storage.min.js' : 'vuejs-storage.js',
+		filename: 'vuejs-storage.js',
 		path: path.join(__dirname, 'dist'),
 		libraryTarget: 'umd',
 		library: ['vuejsStorage']
@@ -22,10 +22,5 @@ module.exports = {
 		extensions: ['.ts']
 	},
 	devtool: 'source-map',
-	plugins: prod ? [
-		new webpack.optimize.UglifyJsPlugin({
-			compress: { warnings: false },
-			sourceMap: true
-		})
-	] : []
+	plugins: []
 }
