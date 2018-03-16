@@ -17,6 +17,9 @@ export function createLSStorage({
 		},
 		getItem(key) {
 			return parse(storage.getItem(key))
+		},
+		has(key) {
+			return storage.getItem(key) !== null
 		}
 	}
 }

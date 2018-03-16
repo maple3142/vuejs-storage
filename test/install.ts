@@ -17,11 +17,13 @@ describe('plugin', () => {
 	it('data in storage should be accessible', () => {
 		app = new Vue({
 			el: '#appinstall',
+			data: {
+				a: 1,
+				b: 2
+			},
 			storage: {
 				namespace: 'vue1',
-				data: {
-					a: 1
-				}
+				keys: ['a']
 			},
 			template: `{{a}}`
 		})

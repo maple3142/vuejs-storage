@@ -1,20 +1,28 @@
-import { Store, VuexPlugin, VuexOption } from './interfaces'
+import { Store, VuexPlugin, Option } from './interfaces'
 
 import { createLSStorage } from './lsstorage'
 
-const assign = (<any>Object).assign
+import * as assign from 'object-assign'
 
 /**
  * Create Vuex plugin
  */
-export function createVuexPlugin(option: VuexOption): VuexPlugin<Object> {
+export function createVuexPlugin(option: Option): VuexPlugin<Object> {
 	const ls = createLSStorage(option)
 	return (store: Store<Object>) => {
-		let data = store.state
-		data = assign(data, ls.getItem(option.namespace)) //merge data
-		store.replaceState(data) //set state
+		let data = null
+		if(!ls.has(option.namespace)){
+			data=store.state
+			ls.setItem(option.namespace,data)
+		}
+		else{
+			data=ls.getItem(option.namespace)
+		}
+		store.replaceState(assign(store.state, data)) //merge state
 		store.subscribe((mutation, state) => {
-			ls.setItem(option.namespace, state)
+			const obj={}
+			option.keys.forEach(k=>obj[k]=state[k])
+			ls.setItem(option.namespace, obj)
 		})
 	}
 }

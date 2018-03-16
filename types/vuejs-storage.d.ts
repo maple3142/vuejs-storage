@@ -6,10 +6,8 @@ interface Option {
 	namespace: string,
 	storage?: Storage,
 	stringify?(obj: any): string,
-	parse?(str: String): any
-}
-interface StorageOption extends Option {
-	data?: object
+	parse?(str: String): any,
+	keys?: string[]
 }
 
 /* entry.js */
@@ -23,6 +21,6 @@ declare namespace vuejsStorage {
 /* override vue option */
 declare module "vue/types/options" {
 	interface ComponentOptions<V extends Vue> {
-		storage?: StorageOption
+		storage?: Option
 	}
 }

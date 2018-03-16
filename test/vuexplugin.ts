@@ -9,28 +9,29 @@ const store = new Vuex.Store({
 	state: {
 		count: 1
 	},
-	plugins: [createVuexPlugin({
-		namespace: 'vuextest'
-	})]
+	plugins: [
+		createVuexPlugin({
+			namespace: 'vuextest',
+			keys: ['count']
+		})
+	]
 })
 const div = document.createElement('div')
 div.id = 'appvuexplugin'
-document.body.appendChild(div)
 describe('vuexplugin', () => {
 	it('no error', done => {
 		new Vue({
-			el: '#appvuexplugin',
 			computed: {
 				count() {
-					return store.state.count
+					return this.$store.state.count
 				}
 			},
 			template: `<span ref="count">{{count}}</span>`,
 			mounted() {
 				this.$refs.count.innerHTML.should.equal('1')
 				done()
-			}
-		})
+			},
+			store
+		}).$mount(div)
 	})
 })
-

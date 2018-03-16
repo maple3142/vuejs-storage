@@ -1,35 +1,40 @@
-import { VueConstructor, StorageOption } from './interfaces'
+import { VueConstructor, Option } from './interfaces'
 
 import { createLSStorage } from './lsstorage'
 
-const assign = (<any>Object).assign
+import * as assign from 'object-assign'
 
 export function install(Vue: VueConstructor) {
 	Vue.mixin({
 		beforeCreate() {
 			if ('storage' in this.$options) {
-				let option: StorageOption = this.$options.storage
-				if (this.$options.storage instanceof Function) {
-					//storage(){...} syntax
-					option = this.$options.storage.apply(this)
-				}
+				let option: Option = this.$options.storage
 
 				const ls = createLSStorage(option)
-				option.data = assign(option.data, ls.getItem(option.namespace))
-				ls.setItem(option.namespace, option.data)
 
-				let data = this.$options.data || {}
+				let optdata = this.$options.data || {}
 				if (this.$options.data instanceof Function) {
 					//data(){...} syntax
-					data = this.$options.data.apply(this)
+					optdata = this.$options.data.apply(this)
 				}
-				this.$options.data = assign(data, option.data) //merge storage's data into data
+
+				let data = null
+				if (!ls.has(option.namespace)) {
+					const tmp = {}
+					option.keys.forEach(k => (tmp[k] = optdata[k]))
+					data = tmp
+					ls.setItem(option.namespace, data)
+				} else {
+					data = ls.getItem(option.namespace)
+				}
+
+				this.$options.data = assign(optdata, data) //merge storage's data into data
 
 				//if no 'watch' option
 				if (!('watch' in this.$options)) {
 					this.$options.watch = {}
 				}
-				for (let key in option.data) {
+				for (const key of option.keys) {
 					//create watchers
 					let watcher: Function = null
 					if (key in this.$options.watch) {
@@ -37,8 +42,8 @@ export function install(Vue: VueConstructor) {
 						watcher = <Function>this.$options.watch[key]
 					}
 					this.$options.watch[key] = value => {
-						option.data[key] = value
-						ls.setItem(option.namespace, option.data)
+						data[key] = value
+						ls.setItem(option.namespace, data)
 						if (watcher !== null) watcher.call(this, value)
 					}
 				}

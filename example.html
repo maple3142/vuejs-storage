@@ -47,17 +47,18 @@
 				}
 			},
 			plugins: [
-				vuejsStorage({ namespace: 'vuex-app' }) //call vuejsStorage with options will return a plugin
+				vuejsStorage({ namespace: 'vuex-app' ,keys: ['count']}) //call vuejsStorage with options will return a plugin
 			]
 		})
 
 		var app = new Vue({
 			el: '#app',
 			storage: { //provide options in storage
-				data: {
-					count: 0
-				},
+				keys: ['count'],
 				namespace: 'app'
+			},
+			data: {
+				count: 0
 			},
 			methods: {
 				add: function () {
@@ -78,16 +79,13 @@
 		var app2 = new Vue({
 			el: '#app2',
 			data: {
-				message: 'Hello'
+				message: 'Hello',
+				count: 0
 			},
-			storage: function () { //function syntax is ok
-				return {
-					data: {
-						count: 0
-					},
-					storage: sessionStorage,
-					namespace: 'app2'
-				}
+			storage: {
+				keys: ['count'],
+				storage: sessionStorage,
+				namespace: 'app2'
 			},
 			methods: {
 				add: function () {

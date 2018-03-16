@@ -1,5 +1,5 @@
 import { createLSStorage } from '../src/lsstorage'
-const ls = createLSStorage({ storage: window.localStorage })
+const ls = createLSStorage({ namespace: 'test' })
 import { should } from 'chai'
 
 describe('lsstorage', () => {

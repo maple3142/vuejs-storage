@@ -7,6 +7,7 @@
 			"lodash.assignin"
 		],
 		"module": "commonjs",
-		"target": "es5"
+		"target": "es5",
+		"allowSyntheticDefaultImports": true
 	}
 }
