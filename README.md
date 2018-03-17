@@ -41,7 +41,7 @@ const store = new Vuex.Store({
   },
   plugins: [
     vuejsStorage({
-      keys: ['increment'],
+      keys: ['count'], //keep state.count in localStorage
       namespace: 'my-namespace',
       storage: window.sessionStorage //if you want to use sessionStorage instead of localStorage
     })
@@ -86,8 +86,7 @@ Option object, can be used when create **Vuex** plugin or in **Vue** option `sto
 }
 ```
 
-> [Example](https://rawgit.com/maple3142/vuejs-storage/master/example.html)
+## Examples
 
-## Other Example
-
-### [Persistant todo list](https://codepen.io/maple3142/full/MEagWw/)
+* [Counter](https://rawgit.com/maple3142/vuejs-storage/master/example.html)
+* [maple3142/TodoList](https://github.com/maple3142/TodoList)
