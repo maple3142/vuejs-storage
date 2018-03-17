@@ -6,46 +6,37 @@ import * as assign from 'object-assign'
 
 export function install(Vue: VueConstructor) {
 	Vue.mixin({
-		beforeCreate() {
+		created() {
 			if ('storage' in this.$options) {
-				let option: Option = this.$options.storage
+				const option: Option = this.$options.storage
+				const { namespace, keys } = option
 
 				const ls = createLSStorage(option)
 
-				let optdata = this.$options.data || {}
-				if (this.$options.data instanceof Function) {
-					//data(){...} syntax
-					optdata = this.$options.data.apply(this)
+				let optdata = {}
+				for (const k of keys) {
+					optdata[k] = this[k]
 				}
 
 				let data = null
-				if (!ls.has(option.namespace)) {
-					const tmp = {}
-					option.keys.forEach(k => (tmp[k] = optdata[k]))
-					data = tmp
-					ls.setItem(option.namespace, data)
+				if (ls.exists()) {
+					data = ls.get()
 				} else {
-					data = ls.getItem(option.namespace)
-				}
-
-				this.$options.data = assign(optdata, data) //merge storage's data into data
-
-				//if no 'watch' option
-				if (!('watch' in this.$options)) {
-					this.$options.watch = {}
-				}
-				for (const key of option.keys) {
-					//create watchers
-					let watcher: Function = null
-					if (key in this.$options.watch) {
-						//backup original watcher
-						watcher = <Function>this.$options.watch[key]
+					const tmp = {}
+					for (const k of keys) {
+						tmp[k] = optdata[k]
 					}
-					this.$options.watch[key] = value => {
-						data[key] = value
-						ls.setItem(option.namespace, data)
-						if (watcher !== null) watcher.call(this, value)
-					}
+					data = tmp
+					ls.set(data)
+				}
+				data = assign(optdata, data)
+
+				for (const k of keys) {
+					this[k] = data[k]
+					this.$watch(k, value => {
+						data[k] = value
+						ls.set(data)
+					})
 				}
 			}
 		}

@@ -3,8 +3,7 @@
 		"sourceMap": true,
 		"types": [
 			"mocha",
-			"chai",
-			"lodash.assignin"
+			"chai"
 		],
 		"module": "commonjs",
 		"target": "es5",

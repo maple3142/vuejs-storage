@@ -6,20 +6,18 @@ import { Option, lsStorage } from './interfaces'
 export function createLSStorage({
 	storage = window.localStorage,
 	stringify = JSON.stringify,
-	parse = JSON.parse
+	parse = JSON.parse,
+	namespace
 }: Option): lsStorage {
 	return {
-		setItem(key, value) {
-			storage.setItem(key, stringify(value))
+		set(value) {
+			storage.setItem(namespace, stringify(value))
 		},
-		removeItem(key) {
-			storage.removeItem(key)
+		get() {
+			return parse(storage.getItem(namespace))
 		},
-		getItem(key) {
-			return parse(storage.getItem(key))
-		},
-		has(key) {
-			return storage.getItem(key) !== null
+		exists() {
+			return storage.getItem(namespace) != null
 		}
 	}
 }

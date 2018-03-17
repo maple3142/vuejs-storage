@@ -11,18 +11,17 @@ export function createVuexPlugin(option: Option): VuexPlugin<Object> {
 	const ls = createLSStorage(option)
 	return (store: Store<Object>) => {
 		let data = null
-		if(!ls.has(option.namespace)){
-			data=store.state
-			ls.setItem(option.namespace,data)
-		}
-		else{
-			data=ls.getItem(option.namespace)
+		if (!ls.exists()) {
+			data = store.state
+			ls.set(data)
+		} else {
+			data = ls.get()
 		}
 		store.replaceState(assign(store.state, data)) //merge state
 		store.subscribe((mutation, state) => {
-			const obj={}
-			option.keys.forEach(k=>obj[k]=state[k])
-			ls.setItem(option.namespace, obj)
+			const obj = {}
+			option.keys.forEach(k => (obj[k] = state[k]))
+			ls.set(obj)
 		})
 	}
 }
