@@ -2,8 +2,9 @@
 
 > vue.js and vuex plugin to persistence data with localStorage/sessionStorage
 
-[![Build Status](https://travis-ci.org/maple3142/vuejs-storage.svg?branch=master)](https://travis-ci.org/maple3142/vuejs-storage)
-[![Greenkeeper badge](https://badges.greenkeeper.io/maple3142/vuejs-storage.svg)](https://greenkeeper.io/)
+
+[![npm](https://img.shields.io/npm/v/vuejs-storage.svg?style=flat-square)](https://www.npmjs.com/package/vuejs-storage)
+[![Travis](https://img.shields.io/travis/maple3142/vuejs-storage.svg?style=flat-square)](https://travis-ci.org/maple3142/vuejs-storage)
 
 ## Usage
 
