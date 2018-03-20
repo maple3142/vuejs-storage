@@ -9,11 +9,11 @@ export function install(Vue: VueConstructor) {
 		created() {
 			if ('storage' in this.$options) {
 				const option: Option = this.$options.storage
-				const { namespace, keys } = option
+				const { keys, merge } = option
 
 				const ls = createLSStorage(option)
 
-				let optdata = {}
+				let optdata = {};
 				for (const k of keys) {
 					optdata[k] = this[k]
 				}
@@ -29,16 +29,16 @@ export function install(Vue: VueConstructor) {
 					data = tmp
 					ls.set(data)
 				}
-				data = assign(optdata, data)
+				data = merge ? merge(optdata, data) : assign(optdata, data)
 
 				for (const k of keys) {
 					this[k] = data[k]
-					this.$watch(k, value => {
+					this.$watch(k, (value) => {
 						data[k] = value
 						ls.set(data)
 					})
 				}
 			}
 		}
-	})
+	});
 }

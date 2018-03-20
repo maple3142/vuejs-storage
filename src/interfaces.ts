@@ -4,6 +4,7 @@ export interface Option {
 	storage?: Storage
 	stringify?(obj: any): string
 	parse?(str: String): any
+	merge?(...obj: object[]): object
 	namespace: string
 	keys?: string[]
 }

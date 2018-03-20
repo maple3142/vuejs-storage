@@ -3,10 +3,11 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { Plugin as VuexPlugin } from 'vuex/types/index'
 interface Option {
-	namespace: string,
-	storage?: Storage,
-	stringify?(obj: any): string,
-	parse?(str: String): any,
+	storage?: Storage
+	stringify?(obj: any): string
+	parse?(str: String): any
+	merge?(...obj: object[]): object
+	namespace: string
 	keys?: string[]
 }
 
