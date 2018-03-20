@@ -1,6 +1,6 @@
 import { VueConstructor, Option } from './interfaces'
-
 import { createLSStorage } from './lsstorage'
+import { set, copy } from './objpath'
 
 import * as assign from 'object-assign'
 
@@ -13,9 +13,9 @@ export function install(Vue: VueConstructor) {
 
 				const ls = createLSStorage(option)
 
-				let optdata = {};
+				let optdata = {}
 				for (const k of keys) {
-					optdata[k] = this[k]
+					copy(optdata, this, k)
 				}
 
 				let data = null
@@ -24,7 +24,7 @@ export function install(Vue: VueConstructor) {
 				} else {
 					const tmp = {}
 					for (const k of keys) {
-						tmp[k] = optdata[k]
+						copy(tmp, optdata, k)
 					}
 					data = tmp
 					ls.set(data)
@@ -32,13 +32,13 @@ export function install(Vue: VueConstructor) {
 				data = merge ? merge(optdata, data) : assign(optdata, data)
 
 				for (const k of keys) {
-					this[k] = data[k]
-					this.$watch(k, (value) => {
-						data[k] = value
+					copy(this, data, k)
+					this.$watch(k, value => {
+						set(data, k, value)
 						ls.set(data)
 					})
 				}
 			}
 		}
-	});
+	})
 }

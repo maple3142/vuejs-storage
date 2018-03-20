@@ -1,4 +1,4 @@
-import { get, set } from '../src/objpath'
+import { get, set, copy } from '../src/objpath'
 import { should } from 'chai'
 
 describe('objpath', () => {
@@ -19,5 +19,11 @@ describe('objpath', () => {
 	})
 	it('final', () => {
 		obj.should.deep.equal({ a: 1, b: { e: { f: 87 } }, c: [{ d: 63 }], q: { r: { s: { t: 5 } } } })
+	})
+	it('copy', () => {
+		const o = { a: { b: { c: 5 } } }
+		const p: any = {}
+		copy(p, o, 'a.b.c')
+		p.a.b.c.should.deep.equal(5)
 	})
 })

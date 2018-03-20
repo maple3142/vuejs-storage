@@ -1,5 +1,5 @@
 import { Store, VuexPlugin, Option } from './interfaces'
-
+import { copy } from './objpath'
 import { createLSStorage } from './lsstorage'
 
 import * as assign from 'object-assign'
@@ -15,13 +15,17 @@ export function createVuexPlugin(option: Option): VuexPlugin<Object> {
 		if (ls.exists()) {
 			data = ls.get()
 		} else {
-			data = store.state
+			const tmp = {}
+			for (const k of keys) {
+				copy(tmp, store.state, k)
+			}
+			data = tmp
 			ls.set(data)
 		}
 		store.replaceState(merge ? merge(store.state, data) : assign(store.state, data)) //merge state
 		store.subscribe((mutation, state) => {
 			const obj = {}
-			keys.forEach(k => (obj[k] = state[k]))
+			keys.forEach(k => copy(obj, state, k))
 			ls.set(obj)
 		})
 	}

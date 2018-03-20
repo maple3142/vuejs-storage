@@ -53,4 +53,23 @@ describe('plugin', () => {
 		})
 		vm.a.should.equal(2)
 	})
+	it('can handle nested key', done => {
+		vm.$destroy()
+		vm = new Vue({
+			el: '#appinstall',
+			data: {
+				a: { b: { c: 5 } },
+				d: 123
+			},
+			storage: {
+				namespace: 'vue2',
+				keys: ['a.b.c']
+			},
+			template: `{{a}}`
+		})
+		setTimeout(() => {
+			JSON.parse(localStorage.vue2).should.deep.equal({ a: { b: { c: 5 } } })
+			done()
+		}, 0)
+	})
 })

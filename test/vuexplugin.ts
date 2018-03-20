@@ -19,7 +19,7 @@ describe('vuexplugin', () => {
 			},
 			plugins: [
 				createVuexPlugin({
-					namespace: 'vuextest',
+					namespace: 'vuextest1',
 					keys: ['count']
 				})
 			]
@@ -50,7 +50,7 @@ describe('vuexplugin', () => {
 			},
 			plugins: [
 				createVuexPlugin({
-					namespace: 'vuextest',
+					namespace: 'vuextest1',
 					keys: ['count']
 				})
 			]
@@ -68,5 +68,26 @@ describe('vuexplugin', () => {
 			},
 			store
 		}).$mount(div)
+	})
+	it('can handle nested key', done => {
+		const store = new Vuex.Store({
+			state: {
+				a: { b: { c: 5 } },
+				d: 123
+			},
+			mutations: {
+				inc: (state: any) => state.count++
+			},
+			plugins: [
+				createVuexPlugin({
+					namespace: 'vuextest2',
+					keys: ['a.b.c']
+				})
+			]
+		})
+		setTimeout(() => {
+			JSON.parse(localStorage.vuextest2).should.deep.equal({ a: { b: { c: 5 } } })
+			done()
+		}, 0)
 	})
 })

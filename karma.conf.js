@@ -20,7 +20,10 @@ module.exports = function(config) {
 				exclude: [/interfaces\.ts$/, /test/]
 			}
 		},
-		reporters: ['progress', 'karma-typescript'],
+		coverageReporter: {
+			reporters: [{ type: 'lcovonly', subdir: 'coverage' }, { type: 'json', subdir: 'coverage' }]
+		},
+		reporters: ['progress', 'coverage', 'karma-typescript'],
 		port: 9876,
 		colors: true,
 		logLevel: config.LOG_INFO,

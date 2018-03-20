@@ -21,3 +21,6 @@ export function set(obj: object, path: string, value: any): void {
 	}
 	_set(paths, obj)
 }
+export function copy(dest: object, source: object, path: string): void {
+	set(dest, path, get(source, path))
+}
