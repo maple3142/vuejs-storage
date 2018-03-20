@@ -15,7 +15,10 @@ module.exports = function(config) {
 			compilerOptions: {
 				module: 'commonjs'
 			},
-			tsconfig: './tsconfig.json'
+			tsconfig: './tsconfig.json',
+			coverageOptions: {
+				exclude: [/interfaces\.ts$/, /test/]
+			}
 		},
 		reporters: ['progress', 'karma-typescript'],
 		port: 9876,

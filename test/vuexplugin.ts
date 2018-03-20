@@ -5,22 +5,26 @@ import Vuex from 'vuex'
 Vue.config.productionTip = false
 Vue.config.devtools = false
 Vue.use(Vuex)
-const store = new Vuex.Store({
-	state: {
-		count: 1
-	},
-	plugins: [
-		createVuexPlugin({
-			namespace: 'vuextest',
-			keys: ['count']
-		})
-	]
-})
 const div = document.createElement('div')
 div.id = 'appvuexplugin'
+let vm
 describe('vuexplugin', () => {
-	it('no error', done => {
-		new Vue({
+	it('first', done => {
+		const store = new Vuex.Store({
+			state: {
+				count: 1
+			},
+			mutations: {
+				inc: (state: any) => state.count++
+			},
+			plugins: [
+				createVuexPlugin({
+					namespace: 'vuextest',
+					keys: ['count']
+				})
+			]
+		})
+		vm = new Vue({
 			computed: {
 				count() {
 					return this.$store.state.count
@@ -29,6 +33,37 @@ describe('vuexplugin', () => {
 			template: `<span ref="count">{{count}}</span>`,
 			mounted() {
 				this.$refs.count.innerHTML.should.equal('1')
+				this.$store.commit('inc')
+				done()
+			},
+			store
+		}).$mount(div)
+	})
+	it('second', done => {
+		vm.$destroy()
+		const store = new Vuex.Store({
+			state: {
+				count: 1
+			},
+			mutations: {
+				inc: (state: any) => state.count++
+			},
+			plugins: [
+				createVuexPlugin({
+					namespace: 'vuextest',
+					keys: ['count']
+				})
+			]
+		})
+		vm = new Vue({
+			computed: {
+				count() {
+					return this.$store.state.count
+				}
+			},
+			template: `<span ref="count">{{count}}</span>`,
+			mounted() {
+				this.$refs.count.innerHTML.should.equal('2')
 				done()
 			},
 			store

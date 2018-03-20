@@ -9,13 +9,13 @@ const div = document.createElement('div')
 div.id = 'appinstall'
 document.body.appendChild(div)
 
-let app: any
+let vm: any
 describe('plugin', () => {
 	before(() => {
 		localStorage.clear()
 	})
 	it('data in storage should be accessible', () => {
-		app = new Vue({
+		vm = new Vue({
 			el: '#appinstall',
 			data: {
 				a: 1,
@@ -27,13 +27,30 @@ describe('plugin', () => {
 			},
 			template: `{{a}}`
 		})
-		app.a.should.equal(1)
+		vm.a.should.equal(1)
 	})
 	it('data should be store as json in localStorage', () => {
 		localStorage.getItem('vue1').should.equal(JSON.stringify({ a: 1 }))
 	})
-	it('data can be change', () => {
-		app.a = 2
-		app.a.should.equal(2)
+	it('data can be change', done => {
+		vm.a = 2
+		vm.a.should.equal(2)
+		setTimeout(done, 0) //vue's watch is not synchronous
+	})
+	it('data can be load from localStorage', () => {
+		vm.$destroy()
+		vm = new Vue({
+			el: '#appinstall',
+			data: {
+				a: 1,
+				b: 2
+			},
+			storage: {
+				namespace: 'vue1',
+				keys: ['a']
+			},
+			template: `{{a}}`
+		})
+		vm.a.should.equal(2)
 	})
 })
