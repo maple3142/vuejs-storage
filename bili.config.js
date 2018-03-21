@@ -1,6 +1,5 @@
-const ts = require('rollup-plugin-typescript')
-
 module.exports = {
+	format: ['umd', 'umd-min'],
 	input: 'src/index.ts',
-	plugins: [ts()]
+	js: 'typescript'
 }

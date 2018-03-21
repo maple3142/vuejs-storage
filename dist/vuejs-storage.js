@@ -1,2 +1,221 @@
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.vuejsStorage=t():e.vuejsStorage=t()}(window,function(){return function(e){var t={};function r(n){if(t[n])return t[n].exports;var o=t[n]={i:n,l:!1,exports:{}};return e[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=e,r.c=t,r.d=function(e,t,n){r.o(e,t)||Object.defineProperty(e,t,{configurable:!1,enumerable:!0,get:n})},r.r=function(e){Object.defineProperty(e,"__esModule",{value:!0})},r.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(t,"a",t),t},r.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},r.p="",r(r.s=5)}([function(e,t,r){"use strict";var n=Object.getOwnPropertySymbols,o=Object.prototype.hasOwnProperty,i=Object.prototype.propertyIsEnumerable;e.exports=function(){try{if(!Object.assign)return!1;var e=new String("abc");if(e[5]="de","5"===Object.getOwnPropertyNames(e)[0])return!1;for(var t={},r=0;r<10;r++)t["_"+String.fromCharCode(r)]=r;if("0123456789"!==Object.getOwnPropertyNames(t).map(function(e){return t[e]}).join(""))return!1;var n={};return"abcdefghijklmnopqrst".split("").forEach(function(e){n[e]=e}),"abcdefghijklmnopqrst"===Object.keys(Object.assign({},n)).join("")}catch(e){return!1}}()?Object.assign:function(e,t){for(var r,u,c=function(e){if(null===e||void 0===e)throw new TypeError("Object.assign cannot be called with null or undefined");return Object(e)}(e),s=1;s<arguments.length;s++){for(var a in r=Object(arguments[s]))o.call(r,a)&&(c[a]=r[a]);if(n){u=n(r);for(var f=0;f<u.length;f++)i.call(r,u[f])&&(c[u[f]]=r[u[f]])}}return c}},function(e,t,r){"use strict";function n(e,t){return t.replace(/\[([^[\]]*)\]/g,".$1.").split(".").filter(function(e){return""!==e}).reduce(function(e,t){return e&&e[t]},e)}function o(e,t,r){!function e(t,n){var o=t.shift();0===t.length?n[o]=r:(n.hasOwnProperty(o)||(n[o]={}),e(t,n[o]))}(t.replace(/\[([^[\]]*)\]/g,".$1.").split(".").filter(function(e){return""!==e}),e)}Object.defineProperty(t,"__esModule",{value:!0}),t.get=n,t.set=o,t.copy=function(e,t,r){o(e,r,n(t,r))}},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.createLSStorage=function(e){var t=e.storage,r=void 0===t?window.localStorage:t,n=e.stringify,o=void 0===n?JSON.stringify:n,i=e.parse,u=void 0===i?JSON.parse:i,c=e.namespace;return{set:function(e){r.setItem(c,o(e))},get:function(){return u(r.getItem(c))},exists:function(){return null!=r.getItem(c)}}}},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var n=r(1),o=r(2),i=r(0);t.createVuexPlugin=function(e){var t=o.createLSStorage(e),r=e.keys,u=e.merge;return function(e){var o=null;if(t.exists())o=t.get();else{for(var c={},s=0,a=r;s<a.length;s++){var f=a[s];n.copy(c,e.state,f)}o=c,t.set(o)}e.replaceState(u?u(e.state,o):i(e.state,o)),e.subscribe(function(e,o){var i={};r.forEach(function(e){return n.copy(i,o,e)}),t.set(i)})}}},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var n=r(2),o=r(1),i=r(0);t.install=function(e){e.mixin({created:function(){if("storage"in this.$options){for(var e=this.$options.storage,t=e.keys,r=e.merge,u=n.createLSStorage(e),c={},s=0,a=t;s<a.length;s++){var f=a[s];o.copy(c,this,f)}var l=null;if(u.exists())l=u.get();else{for(var p={},g=0,d=t;g<d.length;g++)f=d[g],o.copy(p,c,f);l=p,u.set(l)}l=r?r(c,l):i(c,l);for(var v=function(e){o.copy(y,l,e),y.$watch(e,function(t){o.set(l,e,t),u.set(l)})},y=this,b=0,j=t;b<j.length;b++)v(f=j[b])}}})}},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var n=r(4),o=r(3),i=function(e){return o.createVuexPlugin(e)};i.install=n.install,e.exports=i}])});
-//# sourceMappingURL=vuejs-storage.js.map
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    (factory());
+}(this, (function () { 'use strict';
+
+    /**
+     * Create customize localStorage
+     */
+    function createLSStorage(_a) {
+        var _b = _a.storage, storage = _b === void 0 ? window.localStorage : _b, _c = _a.stringify, stringify = _c === void 0 ? JSON.stringify : _c, _d = _a.parse, parse = _d === void 0 ? JSON.parse : _d, namespace = _a.namespace;
+        return {
+            set: function (value) {
+                storage.setItem(namespace, stringify(value));
+            },
+            get: function () {
+                return parse(storage.getItem(namespace));
+            },
+            exists: function () {
+                return storage.getItem(namespace) != null;
+            }
+        };
+    }
+
+    function get(obj, path) {
+        return path
+            .replace(/\[([^[\]]*)\]/g, '.$1.')
+            .split('.')
+            .filter(function (t) { return t !== ''; })
+            .reduce(function (prev, cur) { return prev && prev[cur]; }, obj);
+    }
+    function set(obj, path, value) {
+        var paths = path
+            .replace(/\[([^[\]]*)\]/g, '.$1.')
+            .split('.')
+            .filter(function (t) { return t !== ''; });
+        function _set(paths, cur) {
+            var pname = paths.shift();
+            if (paths.length === 0) {
+                cur[pname] = value;
+            }
+            else {
+                if (!cur.hasOwnProperty(pname))
+                    cur[pname] = {};
+                _set(paths, cur[pname]);
+            }
+        }
+        _set(paths, obj);
+    }
+    function copy(dest, source, path) {
+        set(dest, path, get(source, path));
+    }
+
+    /*
+    object-assign
+    (c) Sindre Sorhus
+    @license MIT
+    */
+    /* eslint-disable no-unused-vars */
+    var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+    var hasOwnProperty = Object.prototype.hasOwnProperty;
+    var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+    function toObject(val) {
+    	if (val === null || val === undefined) {
+    		throw new TypeError('Object.assign cannot be called with null or undefined');
+    	}
+
+    	return Object(val);
+    }
+
+    function shouldUseNative() {
+    	try {
+    		if (!Object.assign) {
+    			return false;
+    		}
+
+    		// Detect buggy property enumeration order in older V8 versions.
+
+    		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+    		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+    		test1[5] = 'de';
+    		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+    			return false;
+    		}
+
+    		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+    		var test2 = {};
+    		for (var i = 0; i < 10; i++) {
+    			test2['_' + String.fromCharCode(i)] = i;
+    		}
+    		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+    			return test2[n];
+    		});
+    		if (order2.join('') !== '0123456789') {
+    			return false;
+    		}
+
+    		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+    		var test3 = {};
+    		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+    			test3[letter] = letter;
+    		});
+    		if (Object.keys(Object.assign({}, test3)).join('') !==
+    				'abcdefghijklmnopqrst') {
+    			return false;
+    		}
+
+    		return true;
+    	} catch (err) {
+    		// We don't expect any of the above to throw, but better to be safe.
+    		return false;
+    	}
+    }
+
+    var objectAssign = shouldUseNative() ? Object.assign : function (target, source) {
+    	var from;
+    	var to = toObject(target);
+    	var symbols;
+
+    	for (var s = 1; s < arguments.length; s++) {
+    		from = Object(arguments[s]);
+
+    		for (var key in from) {
+    			if (hasOwnProperty.call(from, key)) {
+    				to[key] = from[key];
+    			}
+    		}
+
+    		if (getOwnPropertySymbols) {
+    			symbols = getOwnPropertySymbols(from);
+    			for (var i = 0; i < symbols.length; i++) {
+    				if (propIsEnumerable.call(from, symbols[i])) {
+    					to[symbols[i]] = from[symbols[i]];
+    				}
+    			}
+    		}
+    	}
+
+    	return to;
+    };
+
+    function install(Vue) {
+        Vue.mixin({
+            created: function () {
+                if ('storage' in this.$options) {
+                    var option = this.$options.storage;
+                    var keys = option.keys, merge = option.merge;
+                    var ls_1 = createLSStorage(option);
+                    var optdata = {};
+                    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+                        var k = keys_1[_i];
+                        copy(optdata, this, k);
+                    }
+                    var data_1 = null;
+                    if (ls_1.exists()) {
+                        data_1 = ls_1.get();
+                    }
+                    else {
+                        var tmp = {};
+                        for (var _a = 0, keys_2 = keys; _a < keys_2.length; _a++) {
+                            var k = keys_2[_a];
+                            copy(tmp, optdata, k);
+                        }
+                        data_1 = tmp;
+                        ls_1.set(data_1);
+                    }
+                    data_1 = merge ? merge(optdata, data_1) : objectAssign(optdata, data_1);
+                    var _loop_1 = function (k) {
+                        copy(this_1, data_1, k);
+                        this_1.$watch(k, function (value) {
+                            set(data_1, k, value);
+                            ls_1.set(data_1);
+                        });
+                    };
+                    var this_1 = this;
+                    for (var _b = 0, keys_3 = keys; _b < keys_3.length; _b++) {
+                        var k = keys_3[_b];
+                        _loop_1(k);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Create Vuex plugin
+     */
+    function createVuexPlugin(option) {
+        var ls = createLSStorage(option);
+        var keys = option.keys, merge = option.merge;
+        return function (store) {
+            var data = null;
+            if (ls.exists()) {
+                data = ls.get();
+            }
+            else {
+                var tmp = {};
+                for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+                    var k = keys_1[_i];
+                    copy(tmp, store.state, k);
+                }
+                data = tmp;
+                ls.set(data);
+            }
+            store.replaceState(merge ? merge(store.state, data) : objectAssign(store.state, data)); //merge state
+            store.subscribe(function (mutation, state) {
+                var obj = {};
+                keys.forEach(function (k) { return copy(obj, state, k); });
+                ls.set(obj);
+            });
+        };
+    }
+
+    var vuejsStorage = function (option) {
+        return createVuexPlugin(option);
+    };
+    vuejsStorage.install = install;
+    module.exports = vuejsStorage;
+
+})));
