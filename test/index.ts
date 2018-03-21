@@ -1,4 +1,4 @@
-import * as vuejsStorage from '../src/index'
+import vuejsStorage from '../src/index'
 import { install } from '../src/install'
 import { createVuexPlugin } from '../src/vuexplugin'
 

@@ -1,7 +1,7 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory() :
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
-    (factory());
+    (global.vuejsStorage = factory());
 }(this, (function () { 'use strict';
 
     /**
@@ -34,18 +34,14 @@
             .replace(/\[([^[\]]*)\]/g, '.$1.')
             .split('.')
             .filter(function (t) { return t !== ''; });
-        function _set(paths, cur) {
-            var pname = paths.shift();
-            if (paths.length === 0) {
-                cur[pname] = value;
-            }
-            else {
-                if (!cur.hasOwnProperty(pname))
-                    cur[pname] = {};
-                _set(paths, cur[pname]);
-            }
+        var cur = obj;
+        for (var i = 0; i < paths.length - 1; i++) {
+            var pname = paths[i];
+            if (!cur.hasOwnProperty(pname))
+                cur[pname] = {};
+            cur = cur[pname];
         }
-        _set(paths, obj);
+        cur[paths[paths.length - 1]] = value;
     }
     function copy(dest, source, path) {
         set(dest, path, get(source, path));
@@ -216,6 +212,7 @@
         return createVuexPlugin(option);
     };
     vuejsStorage.install = install;
-    module.exports = vuejsStorage;
+
+    return vuejsStorage;
 
 })));

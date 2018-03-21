@@ -10,16 +10,13 @@ export function set(obj: object, path: string, value: any): void {
 		.replace(/\[([^[\]]*)\]/g, '.$1.')
 		.split('.')
 		.filter(t => t !== '')
-	function _set(paths, cur) {
-		const pname = paths.shift()
-		if (paths.length === 0) {
-			cur[pname] = value
-		} else {
-			if (!cur.hasOwnProperty(pname)) cur[pname] = {}
-			_set(paths, cur[pname])
-		}
+	let cur = obj
+	for (let i = 0; i < paths.length - 1; i++) {
+		const pname = paths[i]
+		if (!cur.hasOwnProperty(pname)) cur[pname] = {}
+		cur = cur[pname]
 	}
-	_set(paths, obj)
+	cur[paths[paths.length - 1]] = value
 }
 export function copy(dest: object, source: object, path: string): void {
 	set(dest, path, get(source, path))

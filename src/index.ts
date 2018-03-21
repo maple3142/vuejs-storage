@@ -13,7 +13,4 @@ const vuejsStorage = <vjs>function(option) {
 }
 vuejsStorage.install = install
 
-declare var module: {
-	exports: {}
-}
-module.exports = vuejsStorage
+export default vuejsStorage
