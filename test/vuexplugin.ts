@@ -90,4 +90,23 @@ describe('vuexplugin', () => {
 			done()
 		}, 0)
 	})
+	it('merge fn works', () => {
+		const store = new Vuex.Store({
+			state: {
+				a: { b: { c: 5 } },
+				d: 123
+			},
+			mutations: {
+				inc: (state: any) => state.count++
+			},
+			plugins: [
+				createVuexPlugin({
+					namespace: 'vuextest2',
+					keys: ['a.b.c'],
+					merge: () => ({ a: 3 })
+				})
+			]
+		})
+		store.state.should.deep.equal({ a: 3 })
+	})
 })
