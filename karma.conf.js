@@ -21,7 +21,7 @@ module.exports = function(config) {
 			}
 		},
 		coverageReporter: {
-			reporters: [{ type: 'lcovonly', subdir: 'coverage' }, { type: 'json', subdir: 'coverage' }]
+			reporters: [{ type: 'lcovonly', subdir: '.' }, { type: 'json', subdir: '.' }]
 		},
 		reporters: ['progress', 'coverage', 'karma-typescript'],
 		port: 9876,
