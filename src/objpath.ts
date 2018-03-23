@@ -1,15 +1,14 @@
-export function get(obj: object, path: string): any {
+export function parsePath(path: string): string[] {
 	return path
 		.replace(/\[([^[\]]*)\]/g, '.$1.')
 		.split('.')
 		.filter(t => t !== '')
-		.reduce((prev, cur) => prev && prev[cur], obj)
+}
+export function get(obj: object, path: string): any {
+	return parsePath(path).reduce((prev, cur) => prev && prev[cur], obj)
 }
 export function set(obj: object, path: string, value: any): void {
-	const paths = path
-		.replace(/\[([^[\]]*)\]/g, '.$1.')
-		.split('.')
-		.filter(t => t !== '')
+	const paths = parsePath(path)
 	let cur = obj
 	for (let i = 0; i < paths.length - 1; i++) {
 		const pname = paths[i]

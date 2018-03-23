@@ -72,4 +72,41 @@ describe('plugin', () => {
 			done()
 		}, 0)
 	})
+	it('can handle object', done => {
+		vm.$destroy()
+		localStorage.setItem('vue3', JSON.stringify({ a: { b: { c: 4 } } }))
+		vm = new Vue({
+			el: '#appinstall',
+			data: {
+				a: { b: { c: 5 } }
+			},
+			storage: {
+				namespace: 'vue3',
+				keys: ['a']
+			},
+			template: `{{a}}`
+		})
+		setTimeout(() => {
+			JSON.parse(localStorage.vue3).should.deep.equal({ a: { b: { c: 4 } } })
+			done()
+		}, 0)
+	})
+	it('merge fn works', () => {
+		vm.$destroy()
+		vm = new Vue({
+			el: '#appinstall',
+			data: {
+				a: { b: { c: 5 } }
+			},
+			storage: {
+				namespace: 'vue4',
+				keys: ['a'],
+				merge: () => <any>{
+					a: 123
+				}
+			},
+			template: `{{a}}`
+		})
+		vm.a.should.equal(123)
+	})
 })

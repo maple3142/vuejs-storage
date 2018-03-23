@@ -1,8 +1,11 @@
-import { get, set, copy } from '../src/objpath'
+import { get, set, copy, parsePath } from '../src/objpath'
 import { should } from 'chai'
 
 describe('objpath', () => {
 	const obj = { a: 1, b: { e: { f: 87 } }, c: [{ d: 1 }] }
+	it('parsePath', () => {
+		parsePath('a.b[123].casd.test').should.deep.equal(['a', 'b', '123', 'casd', 'test'])
+	})
 	it('get', () => {
 		get(obj, 'b.e.f').should.equal(87)
 	})
