@@ -22,18 +22,17 @@
         };
     }
 
-    function get(obj, path) {
+    function parsePath(path) {
         return path
             .replace(/\[([^[\]]*)\]/g, '.$1.')
             .split('.')
-            .filter(function (t) { return t !== ''; })
-            .reduce(function (prev, cur) { return prev && prev[cur]; }, obj);
+            .filter(function (t) { return t !== ''; });
+    }
+    function get(obj, path) {
+        return parsePath(path).reduce(function (prev, cur) { return prev && prev[cur]; }, obj);
     }
     function set(obj, path, value) {
-        var paths = path
-            .replace(/\[([^[\]]*)\]/g, '.$1.')
-            .split('.')
-            .filter(function (t) { return t !== ''; });
+        var paths = parsePath(path);
         var cur = obj;
         for (var i = 0; i < paths.length - 1; i++) {
             var pname = paths[i];
@@ -47,94 +46,22 @@
         set(dest, path, get(source, path));
     }
 
-    /*
-    object-assign
-    (c) Sindre Sorhus
-    @license MIT
-    */
-    /* eslint-disable no-unused-vars */
-    var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-    var hasOwnProperty = Object.prototype.hasOwnProperty;
-    var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-    function toObject(val) {
-    	if (val === null || val === undefined) {
-    		throw new TypeError('Object.assign cannot be called with null or undefined');
-    	}
-
-    	return Object(val);
+    // a simple object merge function implementation
+    function assign (obj1) {
+        var objs = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            objs[_i - 1] = arguments[_i];
+        }
+        for (var _a = 0, objs_1 = objs; _a < objs_1.length; _a++) {
+            var obj2 = objs_1[_a];
+            for (var k in obj2) {
+                if (!obj2.hasOwnProperty(k))
+                    continue;
+                obj1[k] = obj2[k];
+            }
+        }
+        return obj1;
     }
-
-    function shouldUseNative() {
-    	try {
-    		if (!Object.assign) {
-    			return false;
-    		}
-
-    		// Detect buggy property enumeration order in older V8 versions.
-
-    		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-    		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-    		test1[5] = 'de';
-    		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-    			return false;
-    		}
-
-    		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-    		var test2 = {};
-    		for (var i = 0; i < 10; i++) {
-    			test2['_' + String.fromCharCode(i)] = i;
-    		}
-    		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-    			return test2[n];
-    		});
-    		if (order2.join('') !== '0123456789') {
-    			return false;
-    		}
-
-    		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-    		var test3 = {};
-    		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-    			test3[letter] = letter;
-    		});
-    		if (Object.keys(Object.assign({}, test3)).join('') !==
-    				'abcdefghijklmnopqrst') {
-    			return false;
-    		}
-
-    		return true;
-    	} catch (err) {
-    		// We don't expect any of the above to throw, but better to be safe.
-    		return false;
-    	}
-    }
-
-    var objectAssign = shouldUseNative() ? Object.assign : function (target, source) {
-    	var from;
-    	var to = toObject(target);
-    	var symbols;
-
-    	for (var s = 1; s < arguments.length; s++) {
-    		from = Object(arguments[s]);
-
-    		for (var key in from) {
-    			if (hasOwnProperty.call(from, key)) {
-    				to[key] = from[key];
-    			}
-    		}
-
-    		if (getOwnPropertySymbols) {
-    			symbols = getOwnPropertySymbols(from);
-    			for (var i = 0; i < symbols.length; i++) {
-    				if (propIsEnumerable.call(from, symbols[i])) {
-    					to[symbols[i]] = from[symbols[i]];
-    				}
-    			}
-    		}
-    	}
-
-    	return to;
-    };
 
     function install(Vue) {
         Vue.mixin({
@@ -161,7 +88,7 @@
                         data_1 = tmp;
                         ls_1.set(data_1);
                     }
-                    data_1 = merge ? merge(optdata, data_1) : objectAssign(optdata, data_1);
+                    data_1 = merge ? merge(optdata, data_1) : assign(optdata, data_1);
                     var _loop_1 = function (k) {
                         copy(this_1, data_1, k);
                         this_1.$watch(k, function (value) {
@@ -199,7 +126,7 @@
                 data = tmp;
                 ls.set(data);
             }
-            store.replaceState(merge ? merge(store.state, data) : objectAssign(store.state, data)); //merge state
+            store.replaceState(merge ? merge(store.state, data) : assign(store.state, data)); //merge state
             store.subscribe(function (mutation, state) {
                 var obj = {};
                 keys.forEach(function (k) { return copy(obj, state, k); });

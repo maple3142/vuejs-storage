@@ -1,9 +1,5 @@
 'use strict';
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var assign = _interopDefault(require('object-assign'));
-
 /**
  * Create customize localStorage
  */
@@ -22,18 +18,17 @@ function createLSStorage(_a) {
     };
 }
 
-function get(obj, path) {
+function parsePath(path) {
     return path
         .replace(/\[([^[\]]*)\]/g, '.$1.')
         .split('.')
-        .filter(function (t) { return t !== ''; })
-        .reduce(function (prev, cur) { return prev && prev[cur]; }, obj);
+        .filter(function (t) { return t !== ''; });
+}
+function get(obj, path) {
+    return parsePath(path).reduce(function (prev, cur) { return prev && prev[cur]; }, obj);
 }
 function set(obj, path, value) {
-    var paths = path
-        .replace(/\[([^[\]]*)\]/g, '.$1.')
-        .split('.')
-        .filter(function (t) { return t !== ''; });
+    var paths = parsePath(path);
     var cur = obj;
     for (var i = 0; i < paths.length - 1; i++) {
         var pname = paths[i];
@@ -45,6 +40,23 @@ function set(obj, path, value) {
 }
 function copy(dest, source, path) {
     set(dest, path, get(source, path));
+}
+
+// a simple object merge function implementation
+function assign (obj1) {
+    var objs = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        objs[_i - 1] = arguments[_i];
+    }
+    for (var _a = 0, objs_1 = objs; _a < objs_1.length; _a++) {
+        var obj2 = objs_1[_a];
+        for (var k in obj2) {
+            if (!obj2.hasOwnProperty(k))
+                continue;
+            obj1[k] = obj2[k];
+        }
+    }
+    return obj1;
 }
 
 function install(Vue) {
