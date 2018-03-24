@@ -1,6 +1,6 @@
 {
 	"name": "vuejs-storage",
-	"version": "2.2.3",
+	"version": "2.2.4",
 	"main": "./dist/vuejs-storage.cjs.js",
 	"module": "./dist/vuejs-storage.es.js",
 	"browser": "./dist/vuejs-storage.min.js",
@@ -27,10 +27,14 @@
 	},
 	"scripts": {
 		"build": "bili",
-		"test": "karma start --single-run"
+		"test": "karma start --single-run",
+		"prepare": "npm run build"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/maple3142/vuejs-storage.git"
+	},
+	"bugs": {
+		"url": "https://github.com/maple3142/vuejs-storage/issues"
 	}
 }
