@@ -25,7 +25,7 @@ new Vue({
   },
   storage: {
     keys: ['count'], //keep data.count in localStorage
-    namespace: 'my-namespace',
+    namespace: 'my-namespace'
   }
 })
 
@@ -65,7 +65,7 @@ Vue.use(vuejsStorage)
 Create a **Vuex** plugin
 
 ```javascript
-const vuexplugin=vuejsStorage(/* option object*/)
+const vuexplugin = vuejsStorage(/* option object*/)
 ```
 
 ### `option`
@@ -83,7 +83,8 @@ Option object, can be used when create **Vuex** plugin or in **Vue** option `sto
   storage: sessionStorage, //any object has 'setItem' 'getItem' api, default: localStorage
   namespace: 'ns', //a string, REQUIRED
   parse: JSON.parse, //deserialize function, default: JSON.parse
-  stringify: JSON.stringify //serialize function, default: JSON.stringify
+  stringify: JSON.stringify, //serialize function, default: JSON.stringify
+  merge: _assign //a function to merge object like Object.assign, default: internal implementation(src/assign.ts)
 }
 ```
 
