@@ -33,9 +33,12 @@ export function install(Vue: VueConstructor) {
 
 				for (const k of keys) {
 					copy(this, data, k)
-					this.$watch(k, value => {
-						set(data, k, value)
-						ls.set(data)
+					this.$watch(k, {
+						handler: value => {
+							set(data, k, value)
+							ls.set(data)
+						},
+						deep: true
 					})
 				}
 			}
