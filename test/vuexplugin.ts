@@ -75,9 +75,6 @@ describe('vuexplugin', () => {
 				a: { b: { c: 5 } },
 				d: 123
 			},
-			mutations: {
-				inc: (state: any) => state.count++
-			},
 			plugins: [
 				createVuexPlugin({
 					namespace: 'vuextest2',
@@ -96,9 +93,6 @@ describe('vuexplugin', () => {
 				a: { b: { c: 5 } },
 				d: 123
 			},
-			mutations: {
-				inc: (state: any) => state.count++
-			},
 			plugins: [
 				createVuexPlugin({
 					namespace: 'vuextest2',
@@ -113,9 +107,6 @@ describe('vuexplugin', () => {
 		const store = new Vuex.Store({
 			state: {
 				a: 1
-			},
-			mutations: {
-				inc: (state: any) => state.count++
 			},
 			modules: {
 				moduleA: {
