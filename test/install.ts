@@ -99,11 +99,11 @@ describe('plugin', () => {
 				a: { b: { c: 5 } }
 			},
 			storage: {
-				namespace: 'vue4',
+				namespace: 'vue3', //merge fn only called if key exists
 				keys: ['a'],
-				merge: () => <any>{
+				merge: () => ({
 					a: 123
-				}
+				})
 			},
 			template: `{{a}}`
 		})

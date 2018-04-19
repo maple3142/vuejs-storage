@@ -9,11 +9,12 @@ import assign from './assign'
  */
 export function createVuexPlugin(option: Option): VuexPlugin<Object> {
 	const ls = new LSStorage(option)
-	const { keys, merge, namespace: ns } = option
+	const { keys, merge = assign, namespace: ns } = option
 	return (store: Store<Object>) => {
 		let data = null
 		if (ls.has(ns)) {
-			data = ls.get(ns)
+			data = merge(store.state, ls.get(ns))
+			ls.set(ns, data)
 		} else {
 			const obj = {}
 			for (const k of keys) {
@@ -22,7 +23,7 @@ export function createVuexPlugin(option: Option): VuexPlugin<Object> {
 			data = obj
 			ls.set(ns, data)
 		}
-		store.replaceState(merge ? merge(store.state, data) : assign(store.state, data)) //merge state
+		store.replaceState(data) //merge state
 		store.subscribe((mutation, state) => {
 			const obj = {}
 			for (const k of keys) {

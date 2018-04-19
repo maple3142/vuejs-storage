@@ -69,7 +69,7 @@ describe('vuexplugin', () => {
 			store
 		}).$mount(div)
 	})
-	it('can handle nested key', done => {
+	it('can handle nested key', () => {
 		const store = new Vuex.Store({
 			state: {
 				a: { b: { c: 5 } },
@@ -82,10 +82,7 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		setTimeout(() => {
-			JSON.parse(localStorage.vuextest2).should.deep.equal({ a: { b: { c: 5 } } })
-			done()
-		}, 0)
+		localStorage.getItem('vuextest2').should.equal(JSON.stringify({ a: { b: { c: 5 } } }))
 	})
 	it('merge fn works', () => {
 		const store = new Vuex.Store({
@@ -101,7 +98,7 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		store.state.should.deep.equal({ a: 3 })
+		localStorage.getItem('vuextest2').should.equal(JSON.stringify({ a: 3 }))
 	})
 	it('modules', () => {
 		const store = new Vuex.Store({
@@ -118,10 +115,10 @@ describe('vuexplugin', () => {
 			plugins: [
 				createVuexPlugin({
 					namespace: 'vuextest3',
-					keys: ['a']
+					keys: ['a', 'moduleA']
 				})
 			]
 		})
-		store.state.should.deep.equal({ a: 1, moduleA: { a: 7 } })
+		localStorage.getItem('vuextest3').should.equal(JSON.stringify({ a: 1, moduleA: { a: 7 } }))
 	})
 })

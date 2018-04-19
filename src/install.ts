@@ -9,7 +9,7 @@ export function install(Vue: VueConstructor) {
 		created() {
 			if ('storage' in this.$options) {
 				const option: Option = this.$options.storage
-				const { keys, merge, namespace: ns } = option
+				const { keys, merge = assign, namespace: ns } = option
 
 				const ls = new LSStorage(option)
 
@@ -20,7 +20,8 @@ export function install(Vue: VueConstructor) {
 
 				let data = null
 				if (ls.has(ns)) {
-					data = ls.get(ns)
+					data = merge(optdata, ls.get(ns))
+					ls.set(ns, data)
 				} else {
 					const tmp = {}
 					for (const k of keys) {
@@ -29,7 +30,6 @@ export function install(Vue: VueConstructor) {
 					data = tmp
 					ls.set(ns, data)
 				}
-				data = merge ? merge(optdata, data) : assign(optdata, data)
 
 				for (const k of keys) {
 					copy(this, data, k)
