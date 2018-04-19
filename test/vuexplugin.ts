@@ -109,4 +109,28 @@ describe('vuexplugin', () => {
 		})
 		store.state.should.deep.equal({ a: 3 })
 	})
+	it('modules', () => {
+		const store = new Vuex.Store({
+			state: {
+				a: 1
+			},
+			mutations: {
+				inc: (state: any) => state.count++
+			},
+			modules: {
+				moduleA: {
+					state: {
+						a: 7
+					}
+				}
+			},
+			plugins: [
+				createVuexPlugin({
+					namespace: 'vuextest3',
+					keys: ['a']
+				})
+			]
+		})
+		store.state.should.deep.equal({ a: 1, moduleA: { a: 7 } })
+	})
 })
