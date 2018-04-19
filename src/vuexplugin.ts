@@ -1,6 +1,6 @@
 import { Store, VuexPlugin, Option } from './interfaces'
 import { copy } from './objpath'
-import { createLSStorage } from './lsstorage'
+import LSStorage from './lsstorage'
 
 import assign from './assign'
 
@@ -8,25 +8,28 @@ import assign from './assign'
  * Create Vuex plugin
  */
 export function createVuexPlugin(option: Option): VuexPlugin<Object> {
-	const ls = createLSStorage(option)
-	const { keys, merge } = option
+	const ls = new LSStorage(option)
+	const { keys, merge, namespace: ns } = option
 	return (store: Store<Object>) => {
 		let data = null
-		if (ls.exists()) {
-			data = ls.get()
+		if (ls.has(ns)) {
+			data = ls.get(ns)
 		} else {
-			const tmp = {}
+			const obj = {}
 			for (const k of keys) {
-				copy(tmp, store.state, k)
+				copy(obj, store.state, k)
 			}
-			data = tmp
-			ls.set(data)
+			data = obj
+			ls.set(ns, data)
 		}
 		store.replaceState(merge ? merge(store.state, data) : assign(store.state, data)) //merge state
 		store.subscribe((mutation, state) => {
 			const obj = {}
-			keys.forEach(k => copy(obj, state, k))
-			ls.set(obj)
+			for (const k of keys) {
+				copy(obj, state, k)
+			}
+			data = obj
+			ls.set(ns, obj)
 		})
 	}
 }

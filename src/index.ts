@@ -2,7 +2,6 @@ import { Vue, VueConstructor, VuexPlugin } from './interfaces'
 
 import { install } from './install'
 import { createVuexPlugin } from './vuexplugin'
-import { createLSStorage } from './lsstorage'
 
 interface vjs {
 	(): VuexPlugin<Object>
