@@ -50,6 +50,43 @@ const store = new Vuex.Store({
 })
 ```
 
+## Nested key
+
+```javascript
+data: {
+  a: {
+    b: 1,
+    c: 2
+  }
+},
+storage: {
+  namespace: 'test',
+  keys: ['a.b'] //only keep a.b in localStorage
+}
+```
+
+## Vuex modules
+
+```javascript
+state: {
+  a: 1
+},
+modules: {
+  moduleA: {
+    state: {
+      a: 2
+    }
+  }
+},
+plugins: [
+  vuejsStorage({
+    namespace: 'test',
+    keys: ['moduleA','a']
+    // keep both root's state.a & moduleA's state
+  })
+]
+```
+
 ## API
 
 ### `vuejsStorage`
