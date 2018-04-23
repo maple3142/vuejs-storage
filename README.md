@@ -24,7 +24,8 @@ new Vue({
     text: ''
   },
   storage: {
-    keys: ['count'], //keep data.count in localStorage
+    keys: ['count'],
+    //keep data.count in localStorage
     namespace: 'my-namespace'
   }
 })
@@ -42,9 +43,11 @@ const store = new Vuex.Store({
   },
   plugins: [
     vuejsStorage({
-      keys: ['count'], //keep state.count in localStorage
+      keys: ['count'],
+      //keep state.count in localStorage
       namespace: 'my-namespace',
-      storage: window.sessionStorage //if you want to use sessionStorage instead of localStorage
+      storage: sessionStorage
+      //if you want to use sessionStorage instead of localStorage
     })
   ]
 })
@@ -61,7 +64,8 @@ data: {
 },
 storage: {
   namespace: 'test',
-  keys: ['a.b'] //only keep a.b in localStorage
+  keys: ['a.b']
+  //only keep a.b in localStorage
 }
 ```
 
@@ -84,6 +88,26 @@ plugins: [
     keys: ['moduleA','a']
     // keep both root's state.a & moduleA's state
   })
+]
+```
+
+## Multiple storage
+
+```javascript
+data: {
+  a: 1,
+  b: 2
+},
+storage: [
+  {
+    namespace: 'test',
+    keys: ['a']
+  },
+  {
+    namespace: 'test',
+    keys: ['b'],
+    storage: sessionStorage
+  }
 ]
 ```
 
