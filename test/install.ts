@@ -109,4 +109,27 @@ describe('plugin', () => {
 		})
 		vm.a.should.equal(123)
 	})
+	it('multiple storage', () => {
+		vm.$destroy()
+		vm = new Vue({
+			el: '#appinstall',
+			data: {
+				a: 1,
+				b: 2
+			},
+			storage: [
+				{
+					namespace: 'vue4',
+					keys: ['a']
+				},
+				{
+					namespace: 'vue4',
+					keys: ['b'],
+					storage: sessionStorage
+				}
+			]
+		})
+		localStorage.getItem('vue4').should.equal(JSON.stringify({ a: 1 }))
+		sessionStorage.getItem('vue4').should.equal(JSON.stringify({ b: 2 }))
+	})
 })

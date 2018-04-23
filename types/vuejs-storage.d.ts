@@ -14,14 +14,14 @@ interface Option {
 /* entry.js */
 export = vuejsStorage
 
-declare function vuejsStorage(option: Option): VuexPlugin<object>
+declare function vuejsStorage(option: Option): VuexPlugin
 declare namespace vuejsStorage {
-	function install(Vue: Vue, config?: Object): void
+	function install(Vue: Vue): void
 }
 
 /* override vue option */
-declare module "vue/types/options" {
+declare module 'vue/types/options' {
 	interface ComponentOptions<V extends Vue> {
-		storage?: Option
+		storage?: Option | Option[]
 	}
 }
