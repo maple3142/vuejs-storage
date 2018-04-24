@@ -4,7 +4,7 @@ import { set, copy } from './objpath'
 
 import assign from './assign'
 
-function main(vm, option: Option) {
+function applyPersistence(vm, option: Option) {
 	const { keys, merge = assign, namespace: ns } = option
 
 	const ls = new LSStorage(option)
@@ -45,10 +45,10 @@ export function install(Vue: VueConstructor) {
 			if ('storage' in this.$options) {
 				const option: Option | Option[] = this.$options.storage
 				if (Array.isArray(option)) {
-					option.forEach(opt => main(this, opt))
+					option.forEach(opt => applyPersistence(this, opt))
 					return
 				}
-				main(this, option)
+				applyPersistence(this, option)
 			}
 		}
 	})
