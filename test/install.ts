@@ -5,18 +5,13 @@ Vue.config.productionTip = false
 Vue.config.devtools = false
 Vue.use(plugin)
 
-const div = document.createElement('div')
-div.id = 'appinstall'
-document.body.appendChild(div)
-
 let vm: any
 describe('plugin', () => {
 	before(() => {
 		localStorage.clear()
 	})
-	it('data in storage should be accessible', () => {
+	it('data should be store as json in localStorage', () => {
 		vm = new Vue({
-			el: '#appinstall',
 			data: {
 				a: 1,
 				b: 2
@@ -24,23 +19,22 @@ describe('plugin', () => {
 			storage: {
 				namespace: 'vue1',
 				keys: ['a']
-			},
-			template: `{{a}}`
+			}
 		})
 		vm.a.should.equal(1)
-	})
-	it('data should be store as json in localStorage', () => {
-		localStorage.getItem('vue1').should.equal(JSON.stringify({ a: 1 }))
+		JSON.parse(localStorage.getItem('vue1')).should.deep.equal({ a: 1 })
 	})
 	it('data can be change', done => {
 		vm.a = 2
 		vm.a.should.equal(2)
-		setTimeout(done, 0) //vue's watch is not synchronous
+		vm.$nextTick(() => {
+			JSON.parse(localStorage.getItem('vue1')).should.deep.equal({ a: 2 })
+			done()
+		})
 	})
-	it('data can be load from localStorage', () => {
+	it('data will be load from localStorage', () => {
 		vm.$destroy()
 		vm = new Vue({
-			el: '#appinstall',
 			data: {
 				a: 1,
 				b: 2
@@ -48,15 +42,13 @@ describe('plugin', () => {
 			storage: {
 				namespace: 'vue1',
 				keys: ['a']
-			},
-			template: `{{a}}`
+			}
 		})
 		vm.a.should.equal(2)
 	})
-	it('can handle nested key', done => {
+	it('can handle nested key', () => {
 		vm.$destroy()
 		vm = new Vue({
-			el: '#appinstall',
 			data: {
 				a: { b: { c: 5 } },
 				d: 123
@@ -64,37 +56,37 @@ describe('plugin', () => {
 			storage: {
 				namespace: 'vue2',
 				keys: ['a.b.c']
-			},
-			template: `{{a}}`
+			}
 		})
-		setTimeout(() => {
-			JSON.parse(localStorage.vue2).should.deep.equal({ a: { b: { c: 5 } } })
+		JSON.parse(localStorage.getItem('vue2')).should.deep.equal({ a: { b: { c: 5 } } })
+	})
+	it('nested key can be change', done => {
+		vm.a.b.c = 8
+		vm.$nextTick(() => {
+			JSON.parse(localStorage.getItem('vue2')).should.deep.equal({ a: { b: { c: 8 } } })
 			done()
-		}, 0)
+		})
 	})
 	it('can handle object', done => {
 		vm.$destroy()
 		localStorage.setItem('vue3', JSON.stringify({ a: { b: { c: 4 } } }))
 		vm = new Vue({
-			el: '#appinstall',
 			data: {
 				a: { b: { c: 5 } }
 			},
 			storage: {
 				namespace: 'vue3',
 				keys: ['a']
-			},
-			template: `{{a}}`
+			}
 		})
-		setTimeout(() => {
-			JSON.parse(localStorage.vue3).should.deep.equal({ a: { b: { c: 4 } } })
+		vm.$nextTick(() => {
+			JSON.parse(localStorage.getItem('vue3')).should.deep.equal({ a: { b: { c: 4 } } })
 			done()
-		}, 0)
+		})
 	})
 	it('merge fn works', () => {
 		vm.$destroy()
 		vm = new Vue({
-			el: '#appinstall',
 			data: {
 				a: { b: { c: 5 } }
 			},
@@ -104,15 +96,13 @@ describe('plugin', () => {
 				merge: () => ({
 					a: 123
 				})
-			},
-			template: `{{a}}`
+			}
 		})
 		vm.a.should.equal(123)
 	})
 	it('multiple storage', () => {
 		vm.$destroy()
 		vm = new Vue({
-			el: '#appinstall',
 			data: {
 				a: 1,
 				b: 2

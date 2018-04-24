@@ -1,4 +1,4 @@
-import { Option, lsStorage } from './interfaces'
+import { Option } from './interfaces'
 
 /**
  * Create customize localStorage

@@ -14,7 +14,7 @@ interface Option {
 /* entry.js */
 export = vuejsStorage
 
-declare function vuejsStorage(option: Option): VuexPlugin
+declare function vuejsStorage(option: Option): VuexPlugin<any>
 declare namespace vuejsStorage {
 	function install(Vue: Vue): void
 }

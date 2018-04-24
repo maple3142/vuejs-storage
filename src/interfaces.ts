@@ -8,8 +8,3 @@ export interface Option {
 	namespace: string
 	keys?: string[]
 }
-export interface lsStorage {
-	set(value: any)
-	get(): any
-	exists(): boolean
-}

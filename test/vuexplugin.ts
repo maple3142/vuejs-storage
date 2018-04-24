@@ -1,15 +1,11 @@
 import { createVuexPlugin } from '../src/vuexplugin'
-import Vue from 'vue/dist/vue.min.js'
+import Vue from 'vue/dist/vue.runtime.min.js'
 import Vuex from 'vuex'
 
-Vue.config.productionTip = false
-Vue.config.devtools = false
 Vue.use(Vuex)
-const div = document.createElement('div')
-div.id = 'appvuexplugin'
-let vm
+
 describe('vuexplugin', () => {
-	it('first', done => {
+	it('first', () => {
 		const store = new Vuex.Store({
 			state: {
 				count: 1
@@ -24,23 +20,11 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		vm = new Vue({
-			computed: {
-				count() {
-					return this.$store.state.count
-				}
-			},
-			template: `<span ref="count">{{count}}</span>`,
-			mounted() {
-				this.$refs.count.innerHTML.should.equal('1')
-				this.$store.commit('inc')
-				done()
-			},
-			store
-		}).$mount(div)
+		store.state.count.should.equal(1)
+		store.commit('inc')
+		JSON.parse(localStorage.getItem('vuextest1')).should.deep.equal({ count: 2 })
 	})
-	it('second', done => {
-		vm.$destroy()
+	it('second', () => {
 		const store = new Vuex.Store({
 			state: {
 				count: 1
@@ -55,19 +39,7 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		vm = new Vue({
-			computed: {
-				count() {
-					return this.$store.state.count
-				}
-			},
-			template: `<span ref="count">{{count}}</span>`,
-			mounted() {
-				this.$refs.count.innerHTML.should.equal('2')
-				done()
-			},
-			store
-		}).$mount(div)
+		store.state.count.should.equal(2)
 	})
 	it('can handle nested key', () => {
 		const store = new Vuex.Store({
@@ -82,7 +54,7 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		localStorage.getItem('vuextest2').should.equal(JSON.stringify({ a: { b: { c: 5 } } }))
+		JSON.parse(localStorage.getItem('vuextest2')).should.deep.equal({ a: { b: { c: 5 } } })
 	})
 	it('merge fn works', () => {
 		const store = new Vuex.Store({
@@ -98,7 +70,7 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		localStorage.getItem('vuextest2').should.equal(JSON.stringify({ a: 3 }))
+		JSON.parse(localStorage.getItem('vuextest2')).should.deep.equal({ a: 3 })
 	})
 	it('modules', () => {
 		const store = new Vuex.Store({
@@ -119,6 +91,6 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		localStorage.getItem('vuextest3').should.equal(JSON.stringify({ a: 1, moduleA: { a: 7 } }))
+		JSON.parse(localStorage.getItem('vuextest3')).should.deep.equal({ a: 1, moduleA: { a: 7 } })
 	})
 })
