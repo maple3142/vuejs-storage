@@ -13,17 +13,16 @@ export function createVuexPlugin(option: Option): VuexPlugin<Object> {
 	return (store: Store<Object>) => {
 		let data = null
 		if (ls.has(ns)) {
-			data = merge(store.state, ls.get(ns))
-			ls.set(ns, data)
+			data = ls.get(ns)
 		} else {
 			const obj = {}
 			for (const k of keys) {
 				copy(obj, store.state, k)
 			}
 			data = obj
-			ls.set(ns, data)
 		}
-		store.replaceState(data) //merge state
+		store.replaceState(merge(store.state, data)) //merge state
+		ls.set(ns, data)
 		store.subscribe((mutation, state) => {
 			const obj = {}
 			for (const k of keys) {

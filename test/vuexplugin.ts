@@ -65,12 +65,12 @@ describe('vuexplugin', () => {
 			plugins: [
 				createVuexPlugin({
 					namespace: 'vuextest2',
-					keys: ['a.b.c'],
+					keys: ['a'],
 					merge: () => ({ a: 3 })
 				})
 			]
 		})
-		JSON.parse(localStorage.getItem('vuextest2')).should.deep.equal({ a: 3 })
+		store.state.should.deep.equal({ a: 3 })
 	})
 	it('modules', () => {
 		const store = new Vuex.Store({
@@ -92,5 +92,21 @@ describe('vuexplugin', () => {
 			]
 		})
 		JSON.parse(localStorage.getItem('vuextest3')).should.deep.equal({ a: 1, moduleA: { a: 7 } })
+	})
+	it("other state shouldn't be change", () => {
+		const store = new Vuex.Store({
+			state: {
+				a: 1,
+				b: 2
+			},
+			plugins: [
+				createVuexPlugin({
+					namespace: 'vuextest4',
+					keys: ['a']
+				})
+			]
+		})
+		JSON.parse(localStorage.getItem('vuextest4')).should.deep.equal({ a: 1 })
+		store.state.should.deep.equal({ a: 1, b: 2 })
 	})
 })

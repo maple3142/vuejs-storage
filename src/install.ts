@@ -16,17 +16,16 @@ function applyPersistence(vm, option: Option) {
 
 	let data = null
 	if (ls.has(ns)) {
-		data = merge(optdata, ls.get(ns))
-		ls.set(ns, data)
+		data = ls.get(ns)
 	} else {
 		const tmp = {}
 		for (const k of keys) {
 			copy(tmp, optdata, k)
 		}
 		data = tmp
-		ls.set(ns, data)
 	}
-
+	ls.set(ns, data)
+	data = merge(optdata, data)
 	for (const k of keys) {
 		copy(vm, data, k)
 		vm.$watch(k, {

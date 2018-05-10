@@ -122,4 +122,20 @@ describe('plugin', () => {
 		localStorage.getItem('vue4').should.equal(JSON.stringify({ a: 1 }))
 		sessionStorage.getItem('vue4').should.equal(JSON.stringify({ b: 2 }))
 	})
+	it("other state shouldn't be change", () => {
+		vm.$destroy()
+		vm = new Vue({
+			data: {
+				a: 1,
+				b: 2
+			},
+			storage: {
+				namespace: 'vue5',
+				keys: ['a']
+			}
+		})
+		localStorage.getItem('vue5').should.equal(JSON.stringify({ a: 1 }))
+		vm.a.should.equal(1)
+		vm.b.should.equal(2)
+	})
 })
