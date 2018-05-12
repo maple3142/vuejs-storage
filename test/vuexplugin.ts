@@ -22,7 +22,9 @@ describe('vuexplugin', () => {
 		})
 		store.state.count.should.equal(1)
 		store.commit('inc')
-		JSON.parse(localStorage.getItem('vuextest1')).should.deep.equal({ count: 2 })
+		JSON.parse(localStorage.getItem('vuextest1')).should.deep.equal({
+			count: 2
+		})
 	})
 	it('second', () => {
 		const store = new Vuex.Store({
@@ -54,7 +56,9 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		JSON.parse(localStorage.getItem('vuextest2')).should.deep.equal({ a: { b: { c: 5 } } })
+		JSON.parse(localStorage.getItem('vuextest2')).should.deep.equal({
+			a: { b: { c: 5 } }
+		})
 	})
 	it('merge fn works', () => {
 		const store = new Vuex.Store({
@@ -91,7 +95,10 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		JSON.parse(localStorage.getItem('vuextest3')).should.deep.equal({ a: 1, moduleA: { a: 7 } })
+		JSON.parse(localStorage.getItem('vuextest3')).should.deep.equal({
+			a: 1,
+			moduleA: { a: 7 }
+		})
 	})
 	it("other state shouldn't be change", () => {
 		const store = new Vuex.Store({
@@ -99,14 +106,25 @@ describe('vuexplugin', () => {
 				a: 1,
 				b: 2
 			},
+			modules: {
+				moduleA: {
+					state: {
+						a: 1,
+						b: 2
+					}
+				}
+			},
 			plugins: [
 				createVuexPlugin({
 					namespace: 'vuextest4',
-					keys: ['a']
+					keys: ['a', 'moduleA.a']
 				})
 			]
 		})
-		JSON.parse(localStorage.getItem('vuextest4')).should.deep.equal({ a: 1 })
-		store.state.should.deep.equal({ a: 1, b: 2 })
+		JSON.parse(localStorage.getItem('vuextest4')).should.deep.equal({
+			a: 1,
+			moduleA: { a: 1 }
+		})
+		store.state.should.deep.equal({ a: 1, b: 2, moduleA: { a: 1, b: 2 } })
 	})
 })

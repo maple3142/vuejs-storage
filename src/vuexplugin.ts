@@ -2,14 +2,14 @@ import { Store, VuexPlugin, Option } from './interfaces'
 import { copy } from './objpath'
 import LSStorage from './lsstorage'
 
-import assign from './assign'
+import defaultMerge from './merge'
 
 /**
  * Create Vuex plugin
  */
 export function createVuexPlugin(option: Option): VuexPlugin<Object> {
 	const ls = new LSStorage(option)
-	const { keys, merge = assign, namespace: ns } = option
+	const { keys, merge = defaultMerge, namespace: ns } = option
 	return (store: Store<Object>) => {
 		let data = null
 		if (ls.has(ns)) {

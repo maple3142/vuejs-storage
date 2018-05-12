@@ -2,10 +2,10 @@ import { Vue, VueConstructor, Option } from './interfaces'
 import LSStorage from './lsstorage'
 import { set, copy } from './objpath'
 
-import assign from './assign'
+import defaultMerge from './merge'
 
 function applyPersistence(vm, option: Option) {
-	const { keys, merge = assign, namespace: ns } = option
+	const { keys, merge = defaultMerge, namespace: ns } = option
 
 	const ls = new LSStorage(option)
 
