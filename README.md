@@ -6,6 +6,15 @@
 [![Travis](https://img.shields.io/travis/maple3142/vuejs-storage.svg?style=flat-square)](https://travis-ci.org/maple3142/vuejs-storage)
 [![codecov](https://img.shields.io/codecov/c/github/maple3142/vuejs-storage.svg?style=flat-square)](https://codecov.io/gh/maple3142/vuejs-storage)
 
+## Purpose
+
+This plugin provide a simple binding with `localStorage` and `sessionStorage` (or someing similar) to **Vue** and **Vuex**.
+
+It has **[no dependencies](https://www.npmjs.com/package/vuejs-storage?activeTab=dependencies)**, so it is really small.
+
+* `.js` size: 5.75KB (1.7KB gzipped)
+* `.min.js` size: 2.21KB (1.1KB gzipped)
+
 ## Usage
 
 ```js
