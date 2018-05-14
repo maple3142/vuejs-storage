@@ -1,4 +1,4 @@
-import merge from '../src/merge'
+import merge, { isobj } from '../src/merge'
 
 class Test {}
 ;(<any>Test.prototype).value = 123
@@ -15,6 +15,13 @@ const obj5 = { a: { c: 6 }, x: 3 }
 const objass = (<any>Object).assign
 
 describe('merge', () => {
+	it('isobj', () => {
+		isobj({}).should.be.true
+		isobj('').should.be.false
+		isobj([]).should.be.false
+		isobj(null).should.be.false
+		isobj(undefined).should.be.false
+	})
 	it('2 value', () => {
 		const expected = objass(obj1, obj2)
 		const result = merge(obj1, obj2)
@@ -29,5 +36,12 @@ describe('merge', () => {
 		const expected = { a: { b: 7, c: 6 }, x: 3 }
 		const result = merge(obj4, obj5)
 		result.should.deep.equal(expected)
+	})
+	it('array no merging', () => {
+		merge({ arr: [{ a: 1, b: 2 }, { a: 3, b: 4 }], b: 4 }, { c: 5 }).should.deep.equal({
+			arr: [{ a: 1, b: 2 }, { a: 3, b: 4 }],
+			b: 4,
+			c: 5
+		})
 	})
 })

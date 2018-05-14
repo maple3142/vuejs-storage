@@ -127,4 +127,56 @@ describe('vuexplugin', () => {
 		})
 		store.state.should.deep.equal({ a: 1, b: 2, moduleA: { a: 1, b: 2 } })
 	})
+	it('complex #1', () => {
+		const store = new Vuex.Store({
+			state: {
+				ar: [{ value: 1 }, { value: 2 }],
+				data: {
+					data: {
+						id: 123,
+						value: 456
+					},
+					savedData: {
+						id: 789,
+						value: 101112,
+						ar: [4, 5, 6, 7]
+					}
+				}
+			},
+			modules: {
+				test: {
+					state: {
+						ar: [{ value: 1 }, { value: 2 }],
+						wontBeSave: 1
+					}
+				}
+			},
+			plugins: [
+				createVuexPlugin({
+					namespace: 'vuextest5',
+					keys: ['ar', 'test.ar']
+				}),
+				createVuexPlugin({
+					namespace: 'vuextest5',
+					storage: sessionStorage,
+					keys: ['data.savedData']
+				})
+			]
+		})
+		JSON.parse(localStorage.getItem('vuextest5')).should.deep.equal({
+			ar: [{ value: 1 }, { value: 2 }],
+			test: {
+				ar: [{ value: 1 }, { value: 2 }]
+			}
+		})
+		JSON.parse(sessionStorage.getItem('vuextest5')).should.deep.equal({
+			data: {
+				savedData: {
+					id: 789,
+					value: 101112,
+					ar: [4, 5, 6, 7]
+				}
+			}
+		})
+	})
 })
