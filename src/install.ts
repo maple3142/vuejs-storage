@@ -9,9 +9,9 @@ function applyPersistence(vm, option: Option) {
 
 	const ls = new LSStorage(option)
 
-	let optdata = {}
+	let originaldata = {}
 	for (const k of keys) {
-		copy(optdata, vm, k)
+		copy(originaldata, vm, k)
 	}
 
 	let data = null
@@ -20,12 +20,12 @@ function applyPersistence(vm, option: Option) {
 	} else {
 		const tmp = {}
 		for (const k of keys) {
-			copy(tmp, optdata, k)
+			copy(tmp, originaldata, k)
 		}
 		data = tmp
+		ls.set(ns, data)
 	}
-	ls.set(ns, data)
-	data = merge(optdata, data)
+	data = merge(originaldata, data)
 	for (const k of keys) {
 		copy(vm, data, k)
 		vm.$watch(k, {
@@ -43,11 +43,8 @@ export function install(Vue: VueConstructor) {
 		created() {
 			if ('storage' in this.$options) {
 				const option: Option | Option[] = this.$options.storage
-				if (Array.isArray(option)) {
-					option.forEach(opt => applyPersistence(this, opt))
-					return
-				}
-				applyPersistence(this, option)
+				if (Array.isArray(option)) option.forEach(opt => applyPersistence(this, opt))
+				else applyPersistence(this, option)
 			}
 		}
 	})

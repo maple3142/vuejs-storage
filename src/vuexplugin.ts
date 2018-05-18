@@ -7,29 +7,26 @@ import defaultMerge from './merge'
 /**
  * Create Vuex plugin
  */
-export function createVuexPlugin(option: Option): VuexPlugin<Object> {
+export function createVuexPlugin(option: Option): VuexPlugin<object> {
 	const ls = new LSStorage(option)
 	const { keys, merge = defaultMerge, namespace: ns } = option
-	return (store: Store<Object>) => {
-		let data = null
+	return (store: Store<object>) => {
 		if (ls.has(ns)) {
-			data = ls.get(ns)
+			const data = ls.get(ns)
+			store.replaceState(merge(store.state, data))
 		} else {
-			const obj = {}
+			const data = {}
 			for (const k of keys) {
-				copy(obj, store.state, k)
+				copy(data, store.state, k)
 			}
-			data = obj
+			ls.set(ns, data)
 		}
-		store.replaceState(merge(store.state, data)) //merge state
-		ls.set(ns, data)
 		store.subscribe((mutation, state) => {
-			const obj = {}
+			const data = {}
 			for (const k of keys) {
-				copy(obj, state, k)
+				copy(data, state, k)
 			}
-			data = obj
-			ls.set(ns, obj)
+			ls.set(ns, data)
 		})
 	}
 }
