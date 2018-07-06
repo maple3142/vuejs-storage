@@ -11,7 +11,7 @@ export default class StroageDriverImpl implements StorageDriver {
 		return JSON.parse(this.storage.getItem(key))
 	}
 	has(key: string) {
-		return this.storage.getItem(key) != null
+		return !!this.storage.getItem(key)
 	}
 }
 export const localStorage = new StroageDriverImpl(window.localStorage)
