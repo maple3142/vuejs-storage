@@ -27,11 +27,6 @@ describe('merge', () => {
 		const result = merge(obj1, obj2)
 		result.should.deep.equal(expected)
 	})
-	it('3 value', () => {
-		const expected = objass(obj1, obj2, obj3)
-		const result = merge(obj1, obj2, <any>obj3)
-		result.should.deep.equal(expected)
-	})
 	it('deep', () => {
 		const expected = { a: { b: 7, c: 6 }, x: 3 }
 		const result = merge(obj4, obj5)
