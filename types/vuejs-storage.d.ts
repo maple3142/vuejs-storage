@@ -1,6 +1,6 @@
 /* main.js */
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue/types/index'
+import Vuex from 'vuex/types/index'
 import { Plugin as VuexPlugin } from 'vuex/types/index'
 import { StorageDriver, Option } from '../src/interfaces'
 
