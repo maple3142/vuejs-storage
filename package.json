@@ -1,6 +1,6 @@
 {
 	"name": "vuejs-storage",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"main": "./dist/vuejs-storage.cjs.js",
 	"module": "./dist/vuejs-storage.es.js",
 	"browser": "./dist/vuejs-storage.min.js",
