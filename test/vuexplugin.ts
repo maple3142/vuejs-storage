@@ -1,4 +1,5 @@
 import { createVuexPlugin } from '../src/vuexplugin'
+import { sessionStorage } from '../src/drivers'
 import Vue from 'vue/dist/vue.runtime.min.js'
 import Vuex from 'vuex'
 
@@ -22,7 +23,7 @@ describe('vuexplugin', () => {
 		})
 		store.state.count.should.equal(1)
 		store.commit('inc')
-		JSON.parse(localStorage.getItem('vuextest1')).should.deep.equal({
+		JSON.parse(window.localStorage.getItem('vuextest1')).should.deep.equal({
 			count: 2
 		})
 	})
@@ -56,7 +57,7 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		JSON.parse(localStorage.getItem('vuextest2')).should.deep.equal({
+		JSON.parse(window.localStorage.getItem('vuextest2')).should.deep.equal({
 			a: { b: { c: 5 } }
 		})
 	})
@@ -95,7 +96,7 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		JSON.parse(localStorage.getItem('vuextest3')).should.deep.equal({
+		JSON.parse(window.localStorage.getItem('vuextest3')).should.deep.equal({
 			a: 1,
 			moduleA: { a: 7 }
 		})
@@ -121,7 +122,7 @@ describe('vuexplugin', () => {
 				})
 			]
 		})
-		JSON.parse(localStorage.getItem('vuextest4')).should.deep.equal({
+		JSON.parse(window.localStorage.getItem('vuextest4')).should.deep.equal({
 			a: 1,
 			moduleA: { a: 1 }
 		})
@@ -158,18 +159,18 @@ describe('vuexplugin', () => {
 				}),
 				createVuexPlugin({
 					namespace: 'vuextest5',
-					storage: sessionStorage,
+					driver: sessionStorage,
 					keys: ['data.savedData']
 				})
 			]
 		})
-		JSON.parse(localStorage.getItem('vuextest5')).should.deep.equal({
+		JSON.parse(window.localStorage.getItem('vuextest5')).should.deep.equal({
 			ar: [{ value: 1 }, { value: 2 }],
 			test: {
 				ar: [{ value: 1 }, { value: 2 }]
 			}
 		})
-		JSON.parse(sessionStorage.getItem('vuextest5')).should.deep.equal({
+		JSON.parse(window.sessionStorage.getItem('vuextest5')).should.deep.equal({
 			data: {
 				savedData: {
 					id: 789,

@@ -55,7 +55,7 @@ const store = new Vuex.Store({
       keys: ['count'],
       //keep state.count in localStorage
       namespace: 'my-namespace',
-      storage: sessionStorage
+      driver: vuejsStorage.drivers.sessionStorage
       //if you want to use sessionStorage instead of localStorage
     })
   ]
@@ -115,7 +115,7 @@ storage: [
   {
     namespace: 'test',
     keys: ['b'],
-    storage: sessionStorage
+    driver: vuejsStorage.drivers.sessionStorage
   }
 ]
 ```
@@ -150,10 +150,8 @@ Option object, can be used when create **Vuex** plugin or in **Vue** option `sto
   when used in Vue constructor option, keys means which data should be keep in localStorage
   when used in Vuex plugin, keys mean which state should be keep in localStorage
   */
-  storage: sessionStorage, //any object has 'setItem' 'getItem' api, default: localStorage
+  driver: vuejsStorage.drivers.sessionStorage, //any object has 'set','get','has' api, default: vuejsStorage.drivers.localStorage
   namespace: 'ns', //a string, REQUIRED
-  parse: JSON.parse, //deserialize function, default: JSON.parse
-  stringify: JSON.stringify, //serialize function, default: JSON.stringify
   merge: _assign //a function to merge object like Object.assign, default: internal implementation(src/assign.ts)
 }
 ```

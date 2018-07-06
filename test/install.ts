@@ -1,5 +1,6 @@
 import * as plugin from '../src/install'
-import Vue from 'vue/dist/vue.min.js'
+import { sessionStorage } from '../src/drivers'
+import Vue from 'vue'
 
 Vue.config.productionTip = false
 Vue.config.devtools = false
@@ -8,7 +9,7 @@ Vue.use(plugin)
 let vm: any
 describe('plugin', () => {
 	before(() => {
-		localStorage.clear()
+		window.localStorage.clear()
 	})
 	it('data should be store as json in localStorage', () => {
 		vm = new Vue({
@@ -22,13 +23,13 @@ describe('plugin', () => {
 			}
 		})
 		vm.a.should.equal(1)
-		JSON.parse(localStorage.getItem('vue1')).should.deep.equal({ a: 1 })
+		JSON.parse(window.localStorage.getItem('vue1')).should.deep.equal({ a: 1 })
 	})
 	it('data can be change', done => {
 		vm.a = 2
 		vm.a.should.equal(2)
 		vm.$nextTick(() => {
-			JSON.parse(localStorage.getItem('vue1')).should.deep.equal({ a: 2 })
+			JSON.parse(window.localStorage.getItem('vue1')).should.deep.equal({ a: 2 })
 			done()
 		})
 	})
@@ -58,18 +59,18 @@ describe('plugin', () => {
 				keys: ['a.b.c']
 			}
 		})
-		JSON.parse(localStorage.getItem('vue2')).should.deep.equal({ a: { b: { c: 5 } } })
+		JSON.parse(window.localStorage.getItem('vue2')).should.deep.equal({ a: { b: { c: 5 } } })
 	})
 	it('nested key can be change', done => {
 		vm.a.b.c = 8
 		vm.$nextTick(() => {
-			JSON.parse(localStorage.getItem('vue2')).should.deep.equal({ a: { b: { c: 8 } } })
+			JSON.parse(window.localStorage.getItem('vue2')).should.deep.equal({ a: { b: { c: 8 } } })
 			done()
 		})
 	})
 	it('can handle object', done => {
 		vm.$destroy()
-		localStorage.setItem('vue3', JSON.stringify({ a: { b: { c: 4 } } }))
+		window.localStorage.setItem('vue3', JSON.stringify({ a: { b: { c: 4 } } }))
 		vm = new Vue({
 			data: {
 				a: { b: { c: 5 } }
@@ -80,7 +81,7 @@ describe('plugin', () => {
 			}
 		})
 		vm.$nextTick(() => {
-			JSON.parse(localStorage.getItem('vue3')).should.deep.equal({ a: { b: { c: 4 } } })
+			JSON.parse(window.localStorage.getItem('vue3')).should.deep.equal({ a: { b: { c: 4 } } })
 			done()
 		})
 	})
@@ -115,12 +116,12 @@ describe('plugin', () => {
 				{
 					namespace: 'vue4',
 					keys: ['b'],
-					storage: sessionStorage
+					driver: sessionStorage
 				}
 			]
 		})
-		localStorage.getItem('vue4').should.equal(JSON.stringify({ a: 1 }))
-		sessionStorage.getItem('vue4').should.equal(JSON.stringify({ b: 2 }))
+		window.localStorage.getItem('vue4').should.equal(JSON.stringify({ a: 1 }))
+		window.sessionStorage.getItem('vue4').should.equal(JSON.stringify({ b: 2 }))
 	})
 	it("other state shouldn't be change", () => {
 		vm.$destroy()
@@ -134,7 +135,7 @@ describe('plugin', () => {
 				keys: ['a']
 			}
 		})
-		localStorage.getItem('vue5').should.equal(JSON.stringify({ a: 1 }))
+		window.localStorage.getItem('vue5').should.equal(JSON.stringify({ a: 1 }))
 		vm.a.should.equal(1)
 		vm.b.should.equal(2)
 	})

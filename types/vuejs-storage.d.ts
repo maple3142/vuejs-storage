@@ -1,23 +1,12 @@
 /* main.js */
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue/types/index'
+import Vuex from 'vuex/types/index'
 import { Plugin as VuexPlugin } from 'vuex/types/index'
-interface Option {
-	storage?: Storage
-	stringify?(obj: any): string
-	parse?(str: String): any
-	merge?(...obj: object[]): object
-	namespace: string
-	keys?: string[]
-}
+import { StorageDriver, Option } from '../src/interfaces'
+import { vjs } from '../src/index'
 
 /* entry.js */
-export = vuejsStorage
-
-declare function vuejsStorage(option: Option): VuexPlugin<any>
-declare namespace vuejsStorage {
-	function install(Vue: Vue): void
-}
+export = vjs
 
 /* override vue option */
 declare module 'vue/types/options' {

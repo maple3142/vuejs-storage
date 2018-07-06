@@ -1,13 +1,10 @@
 import { Vue, VueConstructor, Option } from './interfaces'
-import LSStorage from './lsstorage'
 import { set, copy } from './objpath'
-
+import { localStorage } from './drivers'
 import defaultMerge from './merge'
 
 function applyPersistence(vm, option: Option) {
-	const { keys, merge = defaultMerge, namespace: ns } = option
-
-	const ls = new LSStorage(option)
+	const { keys, merge = defaultMerge, namespace: ns, driver = localStorage } = option
 
 	let originaldata = {}
 	for (const k of keys) {
@@ -15,15 +12,15 @@ function applyPersistence(vm, option: Option) {
 	}
 
 	let data = null
-	if (ls.has(ns)) {
-		data = ls.get(ns)
+	if (driver.has(ns)) {
+		data = driver.get(ns)
 	} else {
 		const tmp = {}
 		for (const k of keys) {
 			copy(tmp, originaldata, k)
 		}
 		data = tmp
-		ls.set(ns, data)
+		driver.set(ns, data)
 	}
 	data = merge(originaldata, data)
 	for (const k of keys) {
@@ -31,7 +28,7 @@ function applyPersistence(vm, option: Option) {
 		vm.$watch(k, {
 			handler: value => {
 				set(data, k, value)
-				ls.set(ns, data)
+				driver.set(ns, data)
 			},
 			deep: true
 		})
