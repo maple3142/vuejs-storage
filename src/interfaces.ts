@@ -8,6 +8,6 @@ export interface StorageDriver {
 export interface Option {
 	keys: string[]
 	namespace: string
-	merge: (obj1: object, ...object) => object //default=internal merge function
-	driver: StorageDriver //default=localStorageDriver
+	merge?: (obj1: object, ...object) => object //default=internal merge function
+	driver?: StorageDriver //default=localStorageDriver
 }
