@@ -4,7 +4,7 @@ import { install } from './install'
 import { createVuexPlugin } from './vuexplugin'
 import * as drivers from './drivers'
 
-interface vjs {
+export interface vjs {
 	(): VuexPlugin<Object>
 	install: (Vue: VueConstructor) => void
 	drivers: { localStorage: StorageDriver; sessionStorage: StorageDriver }
