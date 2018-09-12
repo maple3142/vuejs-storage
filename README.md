@@ -5,6 +5,7 @@
 [![npm](https://img.shields.io/npm/v/vuejs-storage.svg?style=flat-square)](https://www.npmjs.com/package/vuejs-storage)
 [![Travis](https://img.shields.io/travis/maple3142/vuejs-storage.svg?style=flat-square)](https://travis-ci.org/maple3142/vuejs-storage)
 [![codecov](https://img.shields.io/codecov/c/github/maple3142/vuejs-storage.svg?style=flat-square)](https://codecov.io/gh/maple3142/vuejs-storage)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmaple3142%2Fvuejs-storage.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmaple3142%2Fvuejs-storage?ref=badge_shield)
 
 ## Purpose
 
@@ -160,3 +161,7 @@ Option object, can be used when create **Vuex** plugin or in **Vue** option `sto
 
 * [Counter](https://rawgit.com/maple3142/vuejs-storage/master/example.html)
 * [maple3142/TodoList](https://github.com/maple3142/TodoList)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmaple3142%2Fvuejs-storage.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmaple3142%2Fvuejs-storage?ref=badge_large)
