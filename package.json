@@ -20,7 +20,7 @@
 		"karma-typescript": "^3.0.8",
 		"lodash.assignin": "^4.2.0",
 		"mocha": "^5.0.4",
-		"rollup-plugin-typescript": "^0.8.1",
+		"rollup-plugin-typescript": "^1.0.0",
 		"typescript": "^2.6.1",
 		"vue": "^2.5.2",
 		"vuex": "^3.0.1"
