@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"sourceMap": true,
 		"types": ["mocha", "chai"],
-		"module": "commonjs",
+		"module": "es2015",
 		"target": "es5",
 		"allowSyntheticDefaultImports": true
 	}

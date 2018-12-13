@@ -6,12 +6,18 @@
 	"browser": "./dist/vuejs-storage.min.js",
 	"types": "./types/vuejs-storage.d.ts",
 	"license": "MIT",
-	"keywords": ["vue", "vuex", "localStorage", "sessionStorage", "persistence"],
+	"keywords": [
+		"vue",
+		"vuex",
+		"localStorage",
+		"sessionStorage",
+		"persistence"
+	],
 	"devDependencies": {
 		"@types/chai": "^4.0.4",
 		"@types/mocha": "^5.0.0",
 		"@types/object-assign": "^4.0.30",
-		"bili": "^3.0.12",
+		"bili": "^3.4.2",
 		"chai": "^4.1.2",
 		"karma": "^2.0.0",
 		"karma-chai": "^0.1.0",
@@ -20,15 +26,16 @@
 		"karma-typescript": "^3.0.8",
 		"lodash.assignin": "^4.2.0",
 		"mocha": "^5.0.4",
-		"rollup-plugin-typescript": "^0.8.1",
-		"typescript": "^2.6.1",
-		"vue": "^2.5.2",
+		"rollup-plugin-typescript2": "^0.18.1",
+		"tslib": "^1.9.3",
+		"typescript": "^3.2.2",
+		"vue": "^2.5.21",
 		"vuex": "^3.0.1"
 	},
 	"scripts": {
 		"build": "bili",
 		"test": "karma start --single-run",
-		"prepare": "npm run build"
+		"prepublishOnly": "bili"
 	},
 	"repository": {
 		"type": "git",
