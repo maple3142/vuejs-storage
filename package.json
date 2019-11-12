@@ -14,7 +14,7 @@
 		"persistence"
 	],
 	"devDependencies": {
-		"@types/chai": "^4.0.4",
+		"@types/chai": "^4.2.5",
 		"@types/mocha": "^5.0.0",
 		"@types/object-assign": "^4.0.30",
 		"bili": "^3.4.2",
