@@ -38,10 +38,26 @@ function applyPersistence(vm, option: Option) {
 export function install(Vue: VueConstructor) {
 	Vue.mixin({
 		created() {
+			function cloneOptions(options: Option, ref: any) {
+				const clonedOptions: Option = {
+					keys: [],
+					namespace: ''
+				}
+				for (var prop in options) {
+					if (options.hasOwnProperty(prop)) {
+						if (prop === 'namespaceFactory') {
+							clonedOptions['namespace'] = options[prop](ref)
+						} else {
+							clonedOptions[prop] = options[prop]
+						}
+					}
+				}
+				return clonedOptions
+			}
 			if ('storage' in this.$options) {
-				const option: Option | Option[] = this.$options.storage
-				if (Array.isArray(option)) option.forEach(opt => applyPersistence(this, opt))
-				else applyPersistence(this, option)
+				const options: Option | Option[] = this.$options.storage
+				if (Array.isArray(options)) options.forEach(opt => applyPersistence(this, cloneOptions(opt, this)))
+				else applyPersistence(this, cloneOptions(options, this))
 			}
 		}
 	})

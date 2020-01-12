@@ -8,6 +8,7 @@ export interface StorageDriver {
 export interface Option {
 	keys: string[]
 	namespace: string
+	namespaceFactory?: ((instance: any) => string)
 	merge?: (obj1: object, ...object) => object //default=internal merge function
 	driver?: StorageDriver //default=localStorageDriver
 }
