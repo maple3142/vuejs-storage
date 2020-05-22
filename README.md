@@ -9,7 +9,7 @@
 
 ## Purpose
 
-This plugin provide a simple binding with `localStorage` and `sessionStorage` (or someing similar) to **Vue** and **Vuex**.
+This plugin provide a simple binding with `localStorage` and `sessionStorage` (or something similar) to **Vue** and **Vuex**.
 
 It has **[no dependencies](https://www.npmjs.com/package/vuejs-storage?activeTab=dependencies)**, so it is really small.
 
