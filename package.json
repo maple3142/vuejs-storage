@@ -3,7 +3,7 @@
 	"version": "3.0.2",
 	"main": "./dist/vuejs-storage.cjs.js",
 	"module": "./dist/vuejs-storage.es.js",
-	"browser": "./dist/vuejs-storage.min.js",
+	"browser": "./dist/vuejs-storage.umd.js",
 	"types": "./types/vuejs-storage.d.ts",
 	"license": "MIT",
 	"keywords": [
