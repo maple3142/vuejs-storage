@@ -1,6 +1,6 @@
 # vuejs-storage
 
-> vue.js and vuex plugin to persistence data with localStorage/sessionStorage
+> Vue.js and Vuex plugin to persistence data with localStorage/sessionStorage
 
 [![npm](https://img.shields.io/npm/v/vuejs-storage.svg?style=flat-square)](https://www.npmjs.com/package/vuejs-storage)
 [![npm](https://img.shields.io/npm/dm/vuejs-storage?style=flat-square)](https://www.npmjs.com/package/vuejs-storage)

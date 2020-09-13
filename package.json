@@ -1,5 +1,6 @@
 {
 	"name": "vuejs-storage",
+	"description": "Vue.js and Vuex plugin to persistence data with localStorage/sessionStorage",
 	"version": "3.0.3",
 	"main": "./dist/vuejs-storage.cjs.js",
 	"module": "./dist/vuejs-storage.es.js",
