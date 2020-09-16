@@ -1,10 +1,21 @@
-import { Vue, VueConstructor, Option } from './interfaces'
+import {
+	Vue,
+	VueConstructor,
+	Option,
+	StorageOptionWithFactory,
+	StorageOption,
+} from './interfaces'
 import { set, copy } from './objpath'
 import { localStorage } from './drivers'
 import defaultMerge from './merge'
 
 function applyPersistence(vm, option: Option) {
-	const { keys, merge = defaultMerge, namespace: ns, driver = localStorage } = option
+	const {
+		keys,
+		merge = defaultMerge,
+		namespace: ns,
+		driver = localStorage,
+	} = option
 
 	let originaldata = {}
 	for (const k of keys) {
@@ -26,11 +37,11 @@ function applyPersistence(vm, option: Option) {
 	for (const k of keys) {
 		copy(vm, data, k)
 		vm.$watch(k, {
-			handler: value => {
+			handler: (value) => {
 				set(data, k, value)
 				driver.set(ns, data)
 			},
-			deep: true
+			deep: true,
 		})
 	}
 }
@@ -39,10 +50,14 @@ export function install(Vue: VueConstructor) {
 	Vue.mixin({
 		created() {
 			if ('storage' in this.$options) {
-				const option: Option | Option[] = this.$options.storage
-				if (Array.isArray(option)) option.forEach(opt => applyPersistence(this, opt))
+				let option: StorageOptionWithFactory = this.$options.storage
+				if (typeof option === 'function') {
+					option = option.apply(this) as StorageOption
+				}
+				if (Array.isArray(option))
+					option.forEach((opt) => applyPersistence(this, opt))
 				else applyPersistence(this, option)
 			}
-		}
+		},
 	})
 }

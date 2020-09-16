@@ -11,3 +11,5 @@ export interface Option {
 	merge?: (obj1: object, ...object) => object //default=internal merge function
 	driver?: StorageDriver //default=localStorageDriver
 }
+export type StorageOption = Option | Option[]
+export type StorageOptionWithFactory = StorageOption | (() => StorageOption)
