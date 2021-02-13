@@ -6,7 +6,8 @@ const merge = (target, source) => {
 			if (!(key in target)) {
 				target[key] = source[key]
 			} else {
-				merge(target[key], source[key])
+				const t = target[key] = target[key] || {}
+				merge(t, source[key])
 			}
 		} else {
 			target[key] = source[key]
