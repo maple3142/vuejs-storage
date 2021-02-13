@@ -1,5 +1,5 @@
 // a simple object merge function implementation
-export const isobj = x => typeof x === 'object' && !Array.isArray(x) && x !== null
+export const isobj = x => typeof x === 'object' && !Array.isArray(x) && x !== null && x !== undefined
 const merge = (target, source) => {
 	for (const key of Object.keys(source)) {
 		if (isobj(source[key])) {
