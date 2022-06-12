@@ -128,6 +128,36 @@ describe('vuexplugin', () => {
 		})
 		store.state.should.deep.equal({ a: 1, b: 2, moduleA: { a: 1, b: 2 } })
 	})
+	it('null or undefined state', () => {
+		const store = new Vuex.Store({
+			state: {
+				nullVar: null,
+				undefinedVar: undefined
+			},
+			mutations: {
+				inc: (state: any) => {
+					state.nullVar = 'not null'
+					state.undefinedVar = 'not undefined'
+				}
+			},
+			plugins: [
+				createVuexPlugin({
+					namespace: 'vuextest1',
+					keys: ['nullVar', 'undefinedVar']
+				})
+			]
+		})
+
+		const nullVarIsNull = (store.state.nullVar === null)
+		const undefinedVarIsUndefined = (store.state.undefinedVar === undefined)
+		nullVarIsNull.should.equal(true)
+		undefinedVarIsUndefined.should.equal(true)
+		store.commit('inc')
+		JSON.parse(window.localStorage.getItem('vuextest1')).should.deep.equal({
+			nullVar: 'not null',
+			undefinedVar: 'not undefined'
+		})
+	})
 	it('complex #1', () => {
 		const store = new Vuex.Store({
 			state: {
